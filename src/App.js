@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Counter from './Components/Counter'
+import './Styles/App.css'
+
 
 class App extends Component {
+
+  onSuccess = () => {
+    console.log("Sukces")
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+
+        <Counter from={13} to={10} onSuccess={this.onSuccess}/>
       </div>
     );
   }
