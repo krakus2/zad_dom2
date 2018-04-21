@@ -1,53 +1,63 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import '../Styles/Counter.css'
+import { Statistic } from 'semantic-ui-react'
+
 
 class Counter extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      from: this.props.from,
-      to: this.props.to,
-      clock: undefined,
-      isRunning: false
+      from: 0,//this.props.from - tak sie nie robi
+      to: 0,//this.props.to,
+      clock: 0,
+      isRunning: false,
+      counter: 0
     }
-    this.onClick = this.onClick.bind(this)
   }
 
-    timer() {
-      let [from, to, isRunning] = [this.state.from, this.state.to, this.state.isRunning]
+    timer = () => {
+      let {from, to, isRunning, counter} = this.state
+      counter++;
+      console.log("hello from timer", from, to)
       let clock = from - to;
       from--;
       if(clock === 0){
         this.props.onSuccess();
         isRunning = false;
+        console.log("jestem zerem", clock)
         clearInterval(this.interval)
       }
-      this.setState({ from, clock, isRunning })
+      this.setState({ from, clock, isRunning, counter })
     }
 
-    /*clockLook(number){
-      let minutes = Math.floor(number / 60);
-      let seconds = number - minutes * 60;
-      if(number%60 > 1){
-        min = number%60
-      }
-      console.log(`min: ${min}, clock: ${number}`)
+    timerLook = (time) => {
+      let min, sec;
+      min = Math.floor(time / 60)
+      time = time - min*60;
+      sec = (time % 60) < 10 ? `0${(time % 60)}` : `${(time % 60)}`;
+      return `${min}:${sec}`
+    }
+
+
+    /*timerLook(time){
+      return `${Math.floor(time / 60)}:${Math.floor(time % 60 > 9 ?)}
     }*/
 
-    fmtMSS(s){return(s-(s%=60))/60+(9<s?':':':0')+s}
-
-    componentDidMount() {
-      let isRunning = this.state.isRunning
-      isRunning = true;
-      this.setState({ isRunning })
-      if(isRunning){
-        this.interval = setInterval(
-          () => this.timer(),
-          1000);
+    componentDidUpdate() {
+      let { counter, from, to } = this.state;
+      if(from){
+        var x = from - to;
+        if(x === counter){
+          console.log("ze srodka ", counter)
+          clearInterval(this.interval)
+          this.interval = setInterval(
+            () => this.timer(),
+            1000);
+        }
       }
+      console.log("componentDidUpdate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", x, counter)
     }
-
 
     componentWillUnmount() {
       clearInterval(this.interval)
@@ -56,28 +66,46 @@ class Counter extends Component {
       this.setState({ isRunning })
     }
 
-    onClick(){
-      let isRunning = this.state.isRunning
+    static getDerivedStateFromProps(nextProps, prevState){
+      console.log("getDerivedStateFromProps: ", nextProps, prevState)
+      return {
+        from: nextProps.from,
+        to: nextProps.to,
+        isRunning: true,
+        counter: nextProps.from - nextProps.to
+      }
+    }
 
-      if(isRunning){
-        clearInterval(this.interval)
-        isRunning = false;
-        this.setState({ isRunning })
-      } else {
-        this.interval = setInterval(
-          () => this.timer(),
-          1000);
-        isRunning = true;
-        this.setState({ isRunning })
+    onClick = () => {
+      let { isRunning, clock }  = this.state
+
+      if(clock){
+        if(isRunning){
+          clearInterval(this.interval)
+          isRunning = false;
+          this.setState({ isRunning })
+        } else {
+          this.interval = setInterval(
+            () => this.timer(),
+            1000);
+          isRunning = true;
+          this.setState({ isRunning })
+        }
       }
     }
 
   render() {
     return (
       <div className="counter" onClick={this.onClick}>
-        <span>Time to apocalypse</span>
-        {(this.state.clock === 0 ? toString(this.state.clock) : this.state.clock ) &&
-          this.fmtMSS(this.state.clock)}
+        <Statistic.Group style={{marginLeft: "auto", marginRight: "auto", marginTop: "50px"}}>
+          <Statistic size='huge'>
+            <Statistic.Value>
+              {this.timerLook(this.state.clock)}
+                {/*(this.state.clock === 0 ? toString(this.state.clock) : this.state.clock ) &&{*/}
+            </Statistic.Value>
+            <Statistic.Label>Timer</Statistic.Label>
+          </Statistic>
+       </Statistic.Group>
       </div>
     );
   }
