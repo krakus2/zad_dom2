@@ -7,7 +7,7 @@ class TimerForm extends Component {
     this.state = {
       data: {
         from: '',
-        to: ''
+        to: 0
       }
     }
   }
