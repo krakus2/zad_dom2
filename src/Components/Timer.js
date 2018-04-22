@@ -4,7 +4,7 @@ import '../Styles/Counter.css'
 import { Statistic } from 'semantic-ui-react'
 
 
-class Counter extends Component {
+class Timer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -111,10 +111,10 @@ class Counter extends Component {
   }
 }
 
-Counter.propTypes = {
+Timer.propTypes = {
   from: PropTypes.number.isRequired,
   to: PropTypes.number.isRequired,
   onSuccess: PropTypes.func
 }
 
-export default Counter;
+export default Timer;
