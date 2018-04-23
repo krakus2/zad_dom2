@@ -67,7 +67,7 @@ class WorldTime extends Component {
 
   queryAxiosTime(data){
     //console.log("hejka z nowego query axios", data, process.env.REACT_APP_TIME_API)
-    axios.get(`http://api.timezonedb.com/v2/get-time-zone?key=${process.env.REACT_APP_TIME_API}&format=json&by=position&lat=${data.cords.lat}&lng=${data.cords.lng}`)
+    axios.get(`https://thingproxy.freeboard.io/fetch/http://api.timezonedb.com/v2/get-time-zone?key=${process.env.REACT_APP_TIME_API}&format=json&by=position&lat=${data.cords.lat}&lng=${data.cords.lng}`)
       .then(response => {
         console.log(data.city, response.data.formatted)
       })
