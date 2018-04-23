@@ -24,13 +24,14 @@ class WorldTimeForm extends Component {
     }
     city = ''
     this.setState({ city, cities, errors })
-    console.log(this.state.cities)
+    this.props.changeState(this.state.cities)
+    //console.log(this.state.cities)
   }
 
   validate = myString => {
     const errors = {}
-    if(/\d/.test(myString) || /\s/.test(myString) || myString.length === 0){
-      errors.city = "Pass correct city name, any spaces are not allowed"
+    if(/\d/.test(myString) || myString.length === 0){
+      errors.city = "Pass correct city name"
     }
     return errors
   }
