@@ -27,6 +27,7 @@ class WorldTime extends Component {
   }
 
   queryAxiosGoogle = (data) => {
+    console.log(process.env.REACT_APP_MAP_API)
     axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${data}&key=${process.env.REACT_APP_MAP_API}`)
       .then(response => {
         //console.log(response.data.results[0])
