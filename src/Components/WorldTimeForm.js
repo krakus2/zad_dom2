@@ -30,7 +30,7 @@ class WorldTimeForm extends Component {
   validate = myString => {
     const errors = {}
     if(/\d/.test(myString) || /\s/.test(myString) || myString.length === 0){
-      errors.city = "Pass correct city name, any spaces not allowed"
+      errors.city = "Pass correct city name, any spaces are not allowed"
     }
     return errors
   }
