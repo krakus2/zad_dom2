@@ -67,7 +67,7 @@ class Timer extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-      console.log("getDerivedStateFromProps: ", nextProps, prevState)
+      //console.log("getDerivedStateFromProps: ", nextProps, prevState)
       return {
         from: nextProps.from,
         to: nextProps.to,

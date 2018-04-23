@@ -12,19 +12,25 @@ class WorldTimeForm extends Component {
     }
   }
 
-  onChange = e => this.setState({ [e.target.name]: e.target.value })
+  onChange = e => {
+    /*if( this.state.city.length === 0){
+      this.props.changeErrors()
+    }*/
+    this.setState({ [e.target.name]: e.target.value })
+  }
 
   onSubmit = e => {
     e.preventDefault();
+    this.props.changeErrors();
     let { city, cities } = this.state
     const errors = this.validate(this.state.city)
-    console.log("errors from cities", errors)
-    if(Object.keys(errors).length === 0){
+    //console.log("errors from cities", errors)
+    if(Object.keys(errors).length === 0 && city !== ''){
       cities.push(city)
+      this.props.changeCities(cities)
     }
     city = ''
     this.setState({ city, cities, errors })
-    this.props.changeState(this.state.cities)
     //console.log(this.state.cities)
   }
 
@@ -50,6 +56,7 @@ class WorldTimeForm extends Component {
                 placeholder='Warsaw'
                 value={city}
                 onChange={this.onChange}
+                //onFocus={this.props.changeErrors}
               />
               {errors.city && <InlineError text={errors.city} /> }
             </Form.Field>
