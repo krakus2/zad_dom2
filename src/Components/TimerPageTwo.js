@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
 import Counter from './Timer'
 import TimerForm from './TimerForm'
 import MyMenu from './MyMenu'

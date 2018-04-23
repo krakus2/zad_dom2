@@ -16,6 +16,10 @@ class WorldTime extends Component {
     })
   }
 
+  componentDidUpdate(prevProps, prevState){
+    console.log("world time did update", prevState.data.cities, this.state.data.cities)
+  }
+
   render() {
     return (
       <div className='WorldTime'>
