@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import MyMenu from './MyMenu'
 import WorldTimeForm from './WorldTimeForm'
 import axios from 'axios'
+import { } from 'semantic-ui-react'
 
 class WorldTime extends Component {
   state = {
     data: {
       cities: []
     },
+    lastCity: '',
     errors: {},
     timeData: {}
   }
@@ -69,20 +71,29 @@ class WorldTime extends Component {
     //console.log("hejka z nowego query axios", data, process.env.REACT_APP_TIME_API)
     axios.get(`https://thingproxy.freeboard.io/fetch/http://api.timezonedb.com/v2/get-time-zone?key=${process.env.REACT_APP_TIME_API}&format=json&by=position&lat=${data.cords.lat}&lng=${data.cords.lng}`)
       .then(response => {
-        console.log(data.city, response.data.formatted)
+        const { formatted } = response.data
+        //console.log(typeof formatted, formatted)
+        //console.log(data.city, formatted)
+        const data = formatted.substr(formatted.indexOf("2018"), 10)
+        //console.log(formatted.indexOf(/201\d/), formatted.length-1)
+        console.log(data)
       })
   }
 
   /*shouldComponentUpdate(nextProps, nextState){
-    //console.log(Object.keys(nextState.errors).length)
-    return Object.keys(nextState.errors).length === 0
+    console.log(nextState )
+    return true//!(nextState.lastCity === this.state.lastCity)
   }*/
 
   componentDidUpdate(prevProps, prevState){
-    if(Object.keys(this.state.errors).length === 0){
-      const city = this.state.data.cities[this.state.data.cities.length-1]
-      //console.log(city)
+    console.log("componentDidUpdate")
+    const city = this.state.data.cities[this.state.data.cities.length-1]
+    const { lastCity } = this.state
+    if(Object.keys(this.state.errors).length === 0
+      && lastCity !== city){
+      console.log(prevState.data.cities, this.state.data.cities[this.state.data.cities.length-1])
       this.queryAxiosGoogle(city)
+      this.setState({ lastCity: city})
     }
   }
 
