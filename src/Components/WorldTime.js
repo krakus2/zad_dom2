@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import MyMenu from './MyMenu'
 import WorldTimeForm from './WorldTimeForm'
+import WorldTimeCard from './WorldTimeCard'
 import axios from 'axios'
-import { } from 'semantic-ui-react'
+import { Button, Card, Image } from 'semantic-ui-react'
 
 class WorldTime extends Component {
   state = {
@@ -11,14 +12,36 @@ class WorldTime extends Component {
     },
     lastCity: '',
     errors: {},
-    timeData: {}
+    timeData: [],
+    condition: false, //if the timeData is provided
+    loading: false //loading animation
   }
 
   changeCities = (data) => {
     //console.log(data)
     this.setState({
       data: { cities: data },
+      loading: true},
+      () => this.setAsk())
+
+    /*let promise = new Promise( (resolve, reject) => {
+      let condition = this.state.condition
+      if(condition){
+        resolve(this.setAsk)
+      }
     })
+    promise.then(resolve => console.log(resolve()))*/
+  }
+
+  setAsk = () => {
+    const city = this.state.data.cities[this.state.data.cities.length-1]
+    //const { lastCity } = this.state
+    console.log(city) //,lastCity)
+    if(Object.keys(this.state.errors).length === 0){
+    //  && lastCity !== city){
+      this.queryAxiosGoogle(city)
+    //  this.setState({ lastCity: city})
+    }
   }
 
   changeErrors = () => {
@@ -29,6 +52,7 @@ class WorldTime extends Component {
   }
 
   queryAxiosGoogle = (data) => {
+    console.log(data)
     axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${data}&key=${process.env.REACT_APP_MAP_API}`)
       .then(response => {
         //console.log(response.data.results[0])
@@ -67,17 +91,34 @@ class WorldTime extends Component {
       })
   }
 
-  queryAxiosTime(data){
+  queryAxiosTime = (cityData) => {
     //console.log("hejka z nowego query axios", data, process.env.REACT_APP_TIME_API)
-    axios.get(`https://thingproxy.freeboard.io/fetch/http://api.timezonedb.com/v2/get-time-zone?key=${process.env.REACT_APP_TIME_API}&format=json&by=position&lat=${data.cords.lat}&lng=${data.cords.lng}`)
+    axios.get(`https://thingproxy.freeboard.io/fetch/http://api.timezonedb.com/v2/get-time-zone?key=${process.env.REACT_APP_TIME_API}&format=json&by=position&lat=${cityData.cords.lat}&lng=${cityData.cords.lng}`)
       .then(response => {
         const { formatted } = response.data
         //console.log(typeof formatted, formatted)
         //console.log(data.city, formatted)
         const data = formatted.substr(formatted.indexOf("2018"), 10)
+        const hours = formatted.substr(formatted.length-8, 10)
         //console.log(formatted.indexOf(/201\d/), formatted.length-1)
-        console.log(data)
+        //console.log("z queryAxiosTime", cityData.city, data, hours)
+        return {city: cityData.city, data, hours}
       })
+      .then(nextData => {
+        console.log(nextData)
+        const timeData = [...this.state.timeData]
+        timeData.push(nextData)
+        this.setState({
+          timeData,
+          condition: true,
+          loading: false
+        })
+        //this.draw(nextData)*/
+      })
+  }
+
+  draw = (data) => {
+
   }
 
   /*shouldComponentUpdate(nextProps, nextState){
@@ -85,7 +126,7 @@ class WorldTime extends Component {
     return true//!(nextState.lastCity === this.state.lastCity)
   }*/
 
-  componentDidUpdate(prevProps, prevState){
+  /*componentDidUpdate(prevProps, prevState){
     console.log("componentDidUpdate")
     const city = this.state.data.cities[this.state.data.cities.length-1]
     const { lastCity } = this.state
@@ -95,14 +136,32 @@ class WorldTime extends Component {
       this.queryAxiosGoogle(city)
       this.setState({ lastCity: city})
     }
-  }
+  }*/
 
   render() {
+    const { loading, timeData, condition } = this.state
+    //loading oparty o roznice w dlugosci tablic timedata i cities
     return (
       <div className='WorldTime'>
         <MyMenu active="worldtime"/>
         <WorldTimeForm changeCities={this.changeCities} error={this.state.errors}
           changeErrors={this.changeErrors}/>
+          {loading && timeData.length === 0 && <p>Loading</p>}
+          {condition &&(
+            timeData.map((elem, i) => {
+              if(timeData.length - 1 === i){
+                console.log("czesc z ifa")
+                if(loading){
+                  return <p>Loading</p>
+                } else{
+                  return <WorldTimeCard key={elem.city}/>
+                }
+              } else {
+                  return <WorldTimeCard key={elem.city}/>
+                  console.log("czesc z elsa")
+              }
+            })
+          )}
       </div>
     );
   }
