@@ -3,41 +3,37 @@ import { Form, Button, Input } from 'semantic-ui-react';
 import InlineError from './Messages/InlineError'
 
 class WorldTimeForm extends Component {
-  constructor() {
-    super();
-    this.state = {
+    state = {
       city: '',
       cities: [],
       errors: {}
     }
-  }
 
   onChange = e => {
-    /*if( this.state.city.length === 0){
-      this.props.changeErrors()
-    }*/
     this.setState({ [e.target.name]: e.target.value })
   }
 
   onSubmit = e => {
     e.preventDefault();
-    this.props.changeErrors();
+    //this.props.changeErrors();
     let { city, cities } = this.state
-    const errors = this.validate(this.state.city)
-    //console.log("errors from cities", errors)
-    if(Object.keys(errors).length === 0 && city !== ''){
+    const errors = this.validate(city, cities)
+    if(Object.keys(errors).length === 0){
       cities.push(city)
       this.props.changeCities(cities)
     }
     city = ''
     this.setState({ city, cities, errors })
-    //console.log(this.state.cities)
   }
 
-  validate = myString => {
+  validate = (myString, myStrings) => {
     const errors = {}
-    if(/\d/.test(myString) || myString.length === 0){
+    if(/\d/.test(myString)){
       errors.city = "Pass correct city name"
+    } else if (myString.length === 0){
+        errors.city = "Don't pass empty string"
+    } else if(myStrings.indexOf(myString) !== -1) {
+        errors.city = "Don't duplicate cities"
     }
     return errors
   }
@@ -56,7 +52,6 @@ class WorldTimeForm extends Component {
                 placeholder='Warsaw'
                 value={city}
                 onChange={this.onChange}
-                //onFocus={this.props.changeErrors}
               />
               {errors.city && <InlineError text={errors.city} /> }
             </Form.Field>
