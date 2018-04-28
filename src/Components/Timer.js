@@ -19,10 +19,11 @@ class Timer extends Component {
     timer = () => {
       let {from, to, isRunning, counter} = this.state
       counter = counter + 0.1;
-      console.log("hello from timer", from, to)
-      let clock = from - to;
       from = from - 0.1;
-      if(clock === 0){
+      let clock = from - to;
+      clock = clock.toFixed(1)
+      console.log(clock)
+      if(clock == 0){
         this.props.onSuccess();
         isRunning = false;
         console.log("jestem zerem", clock)
@@ -38,10 +39,14 @@ class Timer extends Component {
       sec = (time % 60) < 10 ? `0${(time % 60)}` : `${(time % 60)}`;
       milSec = String(sec).substr(3,1)
       sec = String(sec).substr(0,2)
-      console.log(milSec)
-      return `${min}:${sec}:${milSec}0`
+      console.log(typeof(milSec), "milsec")
+      if(milSec == ""){
+        return `${min}:${sec}:${milSec}00`
+      }
+      else{
+        return `${min}:${sec}:${milSec}0`
+      }
     }
-
 
     /*timerLook(time){
       return `${Math.floor(time / 60)}:${Math.floor(time % 60 > 9 ?)}
@@ -52,14 +57,14 @@ class Timer extends Component {
       if(from){
         var x = from - to;
         if(x === counter){
-          console.log("ze srodka ", counter)
+          //console.log("ze srodka ", counter)
           clearInterval(this.interval)
           this.interval = setInterval(
             () => this.timer(),
             100);
         }
       }
-      console.log("componentDidUpdate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", x, counter)
+      //console.log("componentDidUpdate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", x, counter)
     }
 
     componentWillUnmount() {
@@ -81,13 +86,12 @@ class Timer extends Component {
 
     onClick = () => {
       let { isRunning, clock }  = this.state
-
       if(clock){
         if(isRunning){
           clearInterval(this.interval)
           isRunning = false;
           this.setState({ isRunning })
-        } else {
+        } else if(!isRunning && clock != 0){
           this.interval = setInterval(
             () => this.timer(),
             100);

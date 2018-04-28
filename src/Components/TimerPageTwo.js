@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Counter from './Timer'
+import Timer from './Timer'
 import TimerForm from './TimerForm'
 import MyMenu from './MyMenu'
 //import './Styles/App.css'
@@ -37,7 +37,7 @@ class TimerPageTwo extends Component {
         <div className="ui container" style={style}>
           <MyMenu active="timer"/>
           <TimerForm changeState={this.changeState}/>
-          <Counter from={Number(data.from)} to={Number(data.to)} onSuccess={this.onSuccess}/>
+          <Timer from={Number(data.from)} to={Number(data.to)} onSuccess={this.onSuccess}/>
         </div>
     );
   }

@@ -3,7 +3,7 @@ import MyMenu from './MyMenu'
 import WorldTimeForm from './WorldTimeForm'
 import WorldTimeCard from './WorldTimeCard'
 import axios from 'axios'
-import { Button,  Dimmer, Loader, Segment, Card } from 'semantic-ui-react'
+import { Dimmer, Loader, Segment, Card } from 'semantic-ui-react'
 import '../Styles/WorldTime.css'
 import InlineError from './Messages/InlineError'
 
@@ -95,6 +95,24 @@ class WorldTime extends Component {
       })
   }
 
+  componentDidUpdate(prevState, prevProps){
+    console.log(prevState, prevProps)
+  }
+
+
+  updateHours = (hour, key) => {
+    function condition(elem){
+      return elem.city === key
+    }
+    const timeData = [...this.state.timeData]
+    //console.log(data, array, key)
+    const index = timeData.findIndex(condition)
+    console.log(index)
+    timeData[index].hours = hour
+    this.setState({ timeData })
+
+  }
+
 
   render() {
     const { timeData, condition, errors } = this.state
@@ -108,7 +126,7 @@ class WorldTime extends Component {
           <div className="results">
             <Card.Group>
             {condition && timeData.map((elem, i) => (
-              <WorldTimeCard key={elem.city} data={elem} />))}
+              <WorldTimeCard key={elem.city} key2={elem.city} data={elem} updateHours={this.updateHours}/>))}
             {(cities.length !== timeData.length) && Object.keys(errors).length === 0 &&
               <Segment size="huge" className="segment_loading">
                 <Dimmer active>

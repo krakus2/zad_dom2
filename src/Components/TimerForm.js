@@ -23,7 +23,7 @@ class TimerForm extends Component {
   onSubmit = e => {
     e.preventDefault();
     const errors = this.validate(this.state.data)
-    console.log(errors)
+    //console.log(errors)
     this.setState({ errors });
     if(Object.keys(errors).length === 0){
       this.props.changeState(this.state.data)
