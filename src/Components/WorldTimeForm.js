@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Input } from 'semantic-ui-react';
 import InlineError from './Messages/InlineError'
+import '../Styles/WorldTimeForm.css'
 
 class WorldTimeForm extends Component {
     state = {
@@ -41,7 +42,7 @@ class WorldTimeForm extends Component {
   render() {
     const { city, errors } = this.state;
     return (
-        <div className='TimerForm' style={{marginTop: "20px"}}>
+        <div className='WordTimeForm' style={{marginTop: "20px"}}>
           <Form onSubmit={this.onSubmit}>
             <Form.Field error={!!errors.city}>
               <label htmlFor='city'>City</label>

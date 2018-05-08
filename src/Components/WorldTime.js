@@ -124,7 +124,7 @@ class WorldTime extends Component {
         <WorldTimeForm changeCities={this.changeCities} />
         {Object.keys(errors).length !== 0 && <InlineError text={errors.response[0]} /> }
           <div className="results">
-            <Card.Group>
+            <Card.Group itemsPerRow={5}>
             {condition && timeData.map((elem, i) => (
               <WorldTimeCard key={elem.city} key2={elem.city} data={elem} updateHours={this.updateHours}/>))}
             {(cities.length !== timeData.length) && Object.keys(errors).length === 0 &&

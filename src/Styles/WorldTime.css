@@ -1,16 +1,11 @@
 .segment_loading{
-  height: 94px;
-  width: 293px;
-}
-
-.ui.segment{
-  margin: 11px 5px; 
+  position: absolute;
+  left: 10px;
+  top: 1px;
+  width: 208.59px;
+  height: 92.16px;
 }
 
 .results{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-top: 20px;
+  margin-top: 20.5px;
 }
