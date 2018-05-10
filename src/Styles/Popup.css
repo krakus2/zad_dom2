@@ -1,0 +1,28 @@
+.popup {
+  position: fixed;
+  width: 350px;
+  height: 400px;;
+  top: 10vh;
+  left: 30vw;
+  margin: auto;
+  background-color: rgba(0,0,0, 0.5);
+}
+.popup__inner {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  top: 25%;
+  bottom: 25%;
+  margin: auto;
+  background: white;
+}
+
+.popup__inner__row{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.popup__inner__row__day{
+  width: 200px;
+}
