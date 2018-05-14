@@ -15,6 +15,7 @@ class WorldTime extends Component {
     errors: {},
     timeData: [],
     condition: false, //if the timeData is provided
+    counter: 0
   }
 
   changeCities = (data) => {
@@ -85,7 +86,7 @@ class WorldTime extends Component {
         return {city: cityData.city, data, hours}
       })
       .then(nextData => {
-        console.log(nextData)
+        //console.log(nextData)
         const timeData = [...this.state.timeData]
         timeData.push(nextData)
         this.setState({
@@ -95,11 +96,6 @@ class WorldTime extends Component {
       })
   }
 
-  componentDidUpdate(prevState, prevProps){
-    console.log(prevState, prevProps)
-  }
-
-
   updateHours = (hour, key) => {
     function condition(elem){
       return elem.city === key
@@ -107,12 +103,10 @@ class WorldTime extends Component {
     const timeData = [...this.state.timeData]
     //console.log(data, array, key)
     const index = timeData.findIndex(condition)
-    console.log(index)
+    //console.log(index)
     timeData[index].hours = hour
     this.setState({ timeData })
-
   }
-
 
   render() {
     const { timeData, condition, errors } = this.state
@@ -126,7 +120,8 @@ class WorldTime extends Component {
           <div className="results">
             <Card.Group itemsPerRow={5}>
             {condition && timeData.map((elem, i) => (
-              <WorldTimeCard key={elem.city} key2={elem.city} data={elem} updateHours={this.updateHours}/>))}
+                <WorldTimeCard key={elem.city} key2={elem.city} data={elem} updateHours={this.updateHours}/>
+            ))}
             {(cities.length !== timeData.length) && Object.keys(errors).length === 0 &&
               <Segment size="huge" className="segment_loading">
                 <Dimmer active>

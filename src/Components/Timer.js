@@ -18,11 +18,11 @@ class Timer extends Component {
 
     timer = () => {
       let {from, to, isRunning, counter} = this.state
-      counter = counter + 0.1;
-      from = from - 0.1;
+      counter = counter + 0.01;
+      from = from - 0.01;
       let clock = from - to;
-      clock = clock.toFixed(1)
-      console.log(clock)
+      clock = clock.toFixed(2)
+      //console.log(clock)
       if(clock == 0){
         this.props.onSuccess();
         isRunning = false;
@@ -37,15 +37,10 @@ class Timer extends Component {
       min = Math.floor(time / 60)
       time = time - min*60;
       sec = (time % 60) < 10 ? `0${(time % 60)}` : `${(time % 60)}`;
-      milSec = String(sec).substr(3,1)
+      const temp = String(Number(sec).toFixed(2))
       sec = String(sec).substr(0,2)
-      console.log(typeof(milSec), "milsec")
-      if(milSec == ""){
-        return `${min}:${sec}:${milSec}00`
-      }
-      else{
-        return `${min}:${sec}:${milSec}0`
-      }
+      milSec = temp.slice(temp.length-2,temp.length)
+      return `${min}:${sec}:${milSec}`
     }
 
     /*timerLook(time){
@@ -61,7 +56,7 @@ class Timer extends Component {
           clearInterval(this.interval)
           this.interval = setInterval(
             () => this.timer(),
-            100);
+            10);
         }
       }
       //console.log("componentDidUpdate!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", x, counter)
@@ -94,7 +89,7 @@ class Timer extends Component {
         } else if(!isRunning && clock != 0){
           this.interval = setInterval(
             () => this.timer(),
-            100);
+            10);
           isRunning = true;
           this.setState({ isRunning })
         }

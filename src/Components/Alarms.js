@@ -83,6 +83,10 @@ class Alarms extends Component {
     this.setState({ turnOnAlarms })
   }
 
+  componentDidMount(){
+    console.log("no elo")
+  }
+
 
   render() {
     const { alarms, turnOnAlarms } = this.state
@@ -99,7 +103,7 @@ class Alarms extends Component {
                         toogleAlarm={this.toogleAlarm}/>})}
           </div>
         </div>
-        <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/scottschiller/SoundManager2/master/demo/_mp3/1hz-10khz-sweep.mp3" />
+        {/*}<Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" />{*/}
       </div>
 
     );
