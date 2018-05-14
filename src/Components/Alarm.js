@@ -6,7 +6,7 @@ class Alarm extends Component {
   state = {
     hour: '',
     repeat: [],
-    turnOn: false,
+    turnOn: true,
     order: {
       "poniedzialek": 1,
       "wtorek": 2,
@@ -22,7 +22,6 @@ class Alarm extends Component {
       return{
         hour: nextProps.data.hour,
         repeat: nextProps.data.repeat,
-        turnOn: nextProps.data.turnOn,
       }
   }
 
@@ -31,24 +30,25 @@ class Alarm extends Component {
     const hour = e.target.name.split(" ")[0]
     const repeat = e.target.name.split(" ")[1].split("_")
 
-    turnOn = !turnOn
-    this.setState({ turnOn })
     if(repeat[0] === "false"){
       const tempObj = {
         hour,
-        day: getDay(new Date())
+        day: getDay(new Date()),
+        turnOn: !turnOn
       }
       this.props.toogleAlarm(tempObj)
     } else {
         repeat.forEach(elem => {
           const tempObj = {
             hour,
-            day: order[elem]
+            day: order[elem],
+            turnOn: !turnOn
           }
           this.props.toogleAlarm(tempObj)
         })
     }
-
+    turnOn = !turnOn
+    this.setState({ turnOn })
   }
 
   render() {

@@ -14,7 +14,6 @@ class Popup extends React.Component {
     }else{
       daysActive.splice(daysActive.indexOf(e.target.name), 1);
     }
-    console.log(e.target.name, e.target.checked)
 
     const order = {
       // "sunday": 0, // << if sunday is first day of week

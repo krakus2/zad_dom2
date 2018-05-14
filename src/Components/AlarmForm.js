@@ -47,12 +47,6 @@ class AlarmForm extends Component {
   }
 
   onClick = e => {
-    /*this.setState( (prevState, props) => {
-      return {
-        [e.target.name]: prevState[e.target.name] + 1
-      }
-    })*/
-    console.log("hej")
     if( (e.target.textContent === "+" && e.target.name === "hour" && this.state[e.target.name] < 23) ||
         (e.target.textContent === "+" && e.target.name === "minute" && this.state[e.target.name] < 59) ){
       this.setState({[e.target.name]: this.state[e.target.name] + 1})

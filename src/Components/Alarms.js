@@ -4,10 +4,10 @@ import AlarmForm from './AlarmForm'
 import '../Styles/Alarms.css';
 import getDay from 'date-fns/get_day'
 import Alarm from './Alarm'
-
+import isEqual from 'lodash.isequal';
+import Sound from 'react-sound';
 
 class Alarms extends Component {
-
   state = {
     alarms: [],
     errors: {},
@@ -20,7 +20,8 @@ class Alarms extends Component {
       "piatek": 5,
       "sobota": 6,
       "niedziela": 7
-    }
+    },
+    playStatus: Sound.status.PLAYING
   }
 
   //posortowac daty chronologicznie (ale nie za pomoca calych dat, tylko godzin i dni tygodnia)
@@ -32,7 +33,6 @@ class Alarms extends Component {
     const alarms = [...this.state.alarms]
     const turnOnAlarms = [...this.state.turnOnAlarms]
     const { order } = this.state
-    alarm.turnOn = true
 
     if(alarm.repeat.length){
       alarm.repeat.forEach((elem, i) => {
@@ -41,30 +41,46 @@ class Alarms extends Component {
           day: order[elem],
           turnOn: true
         }
-        if(!turnOnAlarms.includes(JSON.stringify(tempObj))){
-          turnOnAlarms.push(JSON.stringify(tempObj))
+        if(!turnOnAlarms.some( elem => isEqual(elem, tempObj))){
+          turnOnAlarms.push(tempObj)
+          turnOnAlarms.sort( (a,b) => {
+            if (a.day > b.day) return 1;
+          	if (a.day < b.day) return -1;
+          	if (a.hour > b.hour) return 1;
+          	if (a.hour < b.hour) return -1;
+          })
           this.setState({ turnOnAlarms })
         }
       })
     } else {
       const tempObj = {
         hour: alarm.hour,
-        day: getDay(new Date())
+        day: getDay(new Date()),
+        turnOn: true
       }
-      if(!turnOnAlarms.includes(JSON.stringify(tempObj))){
-        turnOnAlarms.push(JSON.stringify(tempObj))
+      if(!turnOnAlarms.some( elem => isEqual(elem, tempObj))){
+        turnOnAlarms.push(tempObj)
+        turnOnAlarms.sort( (a,b) => {
+          if (a.day > b.day) return -1;
+          if (a.day < b.day) return 1;
+          if (a.hour > b.hour) return 1;
+          if (a.hour < b.hour) return -1;
+        })
         this.setState({ turnOnAlarms })
       }
     }
 
-    if(!alarms.includes(JSON.stringify(alarm))){
-      alarms.push(JSON.stringify(alarm))
+    if(!alarms.some(elem => isEqual(elem, alarm))){
+      alarms.push(alarm)
       this.setState({ alarms })
     }
  }
 
   toogleAlarm = data => {
-    console.log(data)
+    const turnOnAlarms = [...this.state.turnOnAlarms]
+    const index = turnOnAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
+    turnOnAlarms.splice(index, 1, data)
+    this.setState({ turnOnAlarms })
   }
 
 
@@ -77,13 +93,13 @@ class Alarms extends Component {
           <AlarmForm onSubmit={this.onSubmitForm}/>
           <div className="alarm__alarms">
             {alarms.map(elem => {
-              elem = JSON.parse(elem)
               return <Alarm
                         data={elem}
                         key={`${elem.hour}_${elem.repeat.map(day => day).join("_") || "today"}`}
                         toogleAlarm={this.toogleAlarm}/>})}
           </div>
         </div>
+        <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/scottschiller/SoundManager2/master/demo/_mp3/1hz-10khz-sweep.mp3" />
       </div>
 
     );
