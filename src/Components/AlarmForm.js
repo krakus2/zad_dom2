@@ -64,7 +64,7 @@ class AlarmForm extends Component {
 
   onSubmit = e => {
     const objectAlarm = {}
-    objectAlarm.alarm = `${this.format(this.state.hour)}:${this.format(this.state.minute)}`
+    objectAlarm.hour = `${this.format(this.state.hour)}:${this.format(this.state.minute)}`
     objectAlarm.repeat = [...this.state.repeat]
     objectAlarm.snooze = this.state.snooze
     objectAlarm.taskToTurnOff = this.state.taskToTurnOff

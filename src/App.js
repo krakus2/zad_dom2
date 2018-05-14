@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Timer2Page from './Components/TimerPageTwo'
 import WorldTime from './Components/WorldTime'
-import Alarm from './Components/Alarm';
+import Alarms from './Components/Alarms';
 
 
 class App extends Component {
@@ -11,7 +11,7 @@ class App extends Component {
         <div className="ui container">
           <Route path="/timer" exact component={Timer2Page} />
           <Route path="/worldtime" exact component={WorldTime} />
-          <Route path="/alarm" exact component={Alarm} />
+          <Route path="/alarm" exact component={Alarms} />
         </div>
     );
   }
