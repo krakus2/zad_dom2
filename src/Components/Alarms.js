@@ -35,6 +35,7 @@ class Alarms extends Component {
     const alarms = [...this.state.alarms]
     const shortAlarms = [...this.state.shortAlarms]
     const { order } = this.state
+    console.log(alarm)
 
     if(alarm.repeat.length){
       alarm.repeat.forEach((elem, i) => {
@@ -43,7 +44,7 @@ class Alarms extends Component {
           day: order[elem],
           turnOn: true
         }
-        if(!shortAlarms.some( elem => isEqual(elem, tempObj))){
+        if(!shortAlarms.some( elem => (elem.hour === tempObj.hour && elem.day === tempObj.day))){
           shortAlarms.push(tempObj)
           shortAlarms.sort( (a,b) => {
             if (a.day > b.day) return 1;
@@ -61,7 +62,7 @@ class Alarms extends Component {
         day: getDay(new Date()),
         turnOn: true
       }
-      if(!shortAlarms.some( elem => isEqual(elem, tempObj))){
+      if(!shortAlarms.some( elem => (elem.hour === tempObj.hour && elem.day === tempObj.day))){
         shortAlarms.push(tempObj)
         shortAlarms.sort( (a,b) => {
           if (a.day > b.day) return -1;
@@ -82,7 +83,7 @@ class Alarms extends Component {
 
   toogleAlarm = data => {
     const shortAlarms = [...this.state.shortAlarms]
-    const index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
+    const index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day) //tutaj moze byc kilka indeksow , trzeba to jakos rozwiazac
     shortAlarms.splice(index, 1, data)
     const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
     this.setState({ shortAlarms, turnOnAlarms })
