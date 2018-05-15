@@ -11,6 +11,7 @@ class Alarms extends Component {
   state = {
     alarms: [],
     errors: {},
+    shortAlarms: [],
     turnOnAlarms: [],
     order: {
       "poniedzialek": 1,
@@ -21,7 +22,8 @@ class Alarms extends Component {
       "sobota": 6,
       "niedziela": 7
     },
-    playStatus: Sound.status.PLAYING
+    playStatus: Sound.status.PLAYING,
+    ring: false
   }
 
   //posortowac daty chronologicznie (ale nie za pomoca calych dat, tylko godzin i dni tygodnia)
@@ -31,7 +33,7 @@ class Alarms extends Component {
 
  onSubmitForm = (alarm) => {
     const alarms = [...this.state.alarms]
-    const turnOnAlarms = [...this.state.turnOnAlarms]
+    const shortAlarms = [...this.state.shortAlarms]
     const { order } = this.state
 
     if(alarm.repeat.length){
@@ -41,15 +43,16 @@ class Alarms extends Component {
           day: order[elem],
           turnOn: true
         }
-        if(!turnOnAlarms.some( elem => isEqual(elem, tempObj))){
-          turnOnAlarms.push(tempObj)
-          turnOnAlarms.sort( (a,b) => {
+        if(!shortAlarms.some( elem => isEqual(elem, tempObj))){
+          shortAlarms.push(tempObj)
+          shortAlarms.sort( (a,b) => {
             if (a.day > b.day) return 1;
           	if (a.day < b.day) return -1;
           	if (a.hour > b.hour) return 1;
           	if (a.hour < b.hour) return -1;
           })
-          this.setState({ turnOnAlarms })
+          const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
+          this.setState({ shortAlarms, turnOnAlarms })
         }
       })
     } else {
@@ -58,15 +61,16 @@ class Alarms extends Component {
         day: getDay(new Date()),
         turnOn: true
       }
-      if(!turnOnAlarms.some( elem => isEqual(elem, tempObj))){
-        turnOnAlarms.push(tempObj)
-        turnOnAlarms.sort( (a,b) => {
+      if(!shortAlarms.some( elem => isEqual(elem, tempObj))){
+        shortAlarms.push(tempObj)
+        shortAlarms.sort( (a,b) => {
           if (a.day > b.day) return -1;
           if (a.day < b.day) return 1;
           if (a.hour > b.hour) return 1;
           if (a.hour < b.hour) return -1;
         })
-        this.setState({ turnOnAlarms })
+        const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
+        this.setState({ shortAlarms, turnOnAlarms })
       }
     }
 
@@ -77,19 +81,22 @@ class Alarms extends Component {
  }
 
   toogleAlarm = data => {
-    const turnOnAlarms = [...this.state.turnOnAlarms]
-    const index = turnOnAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
-    turnOnAlarms.splice(index, 1, data)
-    this.setState({ turnOnAlarms })
+    const shortAlarms = [...this.state.shortAlarms]
+    const index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
+    shortAlarms.splice(index, 1, data)
+    const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
+    this.setState({ shortAlarms, turnOnAlarms })
   }
 
   componentDidMount(){
-    console.log("no elo")
+    /*this.interval = setInterval(() => {
+      if()
+    }, 1000)*/
   }
 
 
   render() {
-    const { alarms, turnOnAlarms } = this.state
+    const { alarms, shortAlarms, ring } = this.state
     return (
       <div>
         <MyMenu active="alarm"/>
@@ -103,7 +110,9 @@ class Alarms extends Component {
                         toogleAlarm={this.toogleAlarm}/>})}
           </div>
         </div>
-        {/*}<Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" />{*/}
+        {ring &&
+          <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" />
+        }
       </div>
 
     );
