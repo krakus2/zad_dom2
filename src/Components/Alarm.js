@@ -38,14 +38,17 @@ class Alarm extends Component {
       }
       this.props.toogleAlarm(tempObj)
     } else {
+        const tempObjs = []
         repeat.forEach(elem => {
-          const tempObj = {
+          const tempObj =
+          {
             hour,
             day: order[elem],
             turnOn: !turnOn
           }
-          this.props.toogleAlarm(tempObj)
+          tempObjs.push(tempObj)
         })
+        this.props.toogleAlarm(tempObjs)
     }
     turnOn = !turnOn
     this.setState({ turnOn })
