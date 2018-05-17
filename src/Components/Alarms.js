@@ -6,6 +6,7 @@ import getDay from 'date-fns/get_day'
 import Alarm from './Alarm'
 import isEqual from 'lodash.isequal';
 import Sound from 'react-sound';
+import Popup2 from './Popup2'
 
 class Alarms extends Component {
   state = {
@@ -23,7 +24,10 @@ class Alarms extends Component {
       "niedziela": 7
     },
     playStatus: Sound.status.PLAYING,
-    ring: false
+    ring: false,
+    showPopup: false,
+    minute: '',
+    checkAlarmCounter: 0
   }
 
   //posortowac daty chronologicznie (ale nie za pomoca calych dat, tylko godzin i dni tygodnia)
@@ -52,7 +56,7 @@ class Alarms extends Component {
           	if (a.hour < b.hour) return -1;
           })
           const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
-          this.setState({ shortAlarms, turnOnAlarms })
+          this.setState({ shortAlarms, turnOnAlarms, checkAlarmCounter: 0 })
         }
       })
     } else {
@@ -70,24 +74,24 @@ class Alarms extends Component {
           if (a.hour < b.hour) return -1;
         })
         const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
-        this.setState({ shortAlarms, turnOnAlarms })
+        this.setState({ shortAlarms, turnOnAlarms, checkAlarmCounter: 0 })
       }
     }
 
     if(!alarms.some(elem => isEqual(elem, alarm))){
+      alarm.turnOn =
       alarms.push(alarm)
       this.setState({ alarms })
     }
  }
 
   toogleAlarm = data => {
-    console.log(data)
     const shortAlarms = [...this.state.shortAlarms]
     if(!Array.isArray(data)){
       const index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
       shortAlarms.splice(index, 1, data)
     } else {
-        const indexes = data.reduce( (indexes, elem, i) => {
+        const indexes = shortAlarms.reduce( (indexes, elem, i) => {
           data.forEach(data2 => {
             if(elem.hour === data2.hour && elem.day === data2.day){
               indexes.push(i)
@@ -96,10 +100,7 @@ class Alarms extends Component {
           return indexes
         }, [])
           .forEach((elem, i) => {
-            //dla kazdego indeksu trzeba jeszcze przeleciec, dla roznego data
-            console.log("przed", shortAlarms)
             shortAlarms.splice(elem, 1, data[i])
-            console.log("po", shortAlarms)
           })
       }
 
@@ -108,14 +109,58 @@ class Alarms extends Component {
   }
 
   componentDidMount(){
-    /*this.interval = setInterval(() => {
-      if()
-    }, 1000)*/
+    const date = new Date();
+    this.setState({ minute: date.getMinutes()})
+    this.interval = setInterval(() => {
+      this.checkAlarm()
+    }, 1000)
   }
+
+  checkAlarm = () => {
+    const date = new Date()
+    const turnOnAlarms = [...this.state.turnOnAlarms]
+    const { checkAlarmCounter } = this.state
+    const dateNow = {
+      day: getDay(new Date()),
+      hour: `${date.getHours()}:${date.getMinutes()}`
+    }
+
+    if(checkAlarmCounter === 0){
+      if(turnOnAlarms.length > 0){
+        if(turnOnAlarms[0].day === dateNow.day && turnOnAlarms[0].hour === dateNow.hour){
+          this.setState({ ring: true, showPopup: true})
+        }
+      this.setState({ checkAlarmCounter: checkAlarmCounter+1})
+      }
+    }
+
+    if(this.state.minute !== date.getMinutes()){
+      this.setState({ minute: date.getMinutes()}, () => {
+        if(turnOnAlarms.length > 0){
+          if(turnOnAlarms[0].day === dateNow.day && turnOnAlarms[0].hour === dateNow.hour){
+            this.setState({ ring: true, showPopup: true})
+          }
+        }
+      })
+    }
+  }
+
+  togglePopup = () => {
+    const shortAlarms = [...this.state.shortAlarms]
+    shortAlarms[0].turnOn = false;
+    const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
+
+     this.setState({
+       shortAlarms,
+       turnOnAlarms,
+       showPopup: !this.state.showPopup,
+       ring: false
+     });
+   }
 
 
   render() {
-    const { alarms, shortAlarms, ring } = this.state
+    const { alarms, shortAlarms, ring, showPopup } = this.state
     return (
       <div>
         <MyMenu active="alarm"/>
@@ -130,8 +175,9 @@ class Alarms extends Component {
           </div>
         </div>
         {ring &&
-          <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" />
+          <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" loop={true}/>
         }
+        {showPopup && <Popup2 closePopup={this.togglePopup}/>}
       </div>
 
     );

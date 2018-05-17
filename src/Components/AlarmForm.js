@@ -43,7 +43,6 @@ class AlarmForm extends Component {
     if( (e.target.name === 'hour' && Number(e.target.value) <= 23) || (e.target.name === 'minute' && Number(e.target.value) <= 59) ){
       this.setState({ [e.target.name]:  Number(e.target.value) })
     }
-    console.log(e.target.name, typeof(e.target.value))
   }
 
   onClick = e => {

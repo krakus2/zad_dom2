@@ -35,12 +35,6 @@ class Popup extends React.Component {
     this.setState({ daysActive })
   }
 
-  onClose = () => {
-    const daysActive = [...this.state.daysActive]
-    this.props.onClose(daysActive)
-    this.props.closePopup
-  }
-
   static getDerivedStateFromProps(props, state){
     return {
       daysActive: props.repeat
