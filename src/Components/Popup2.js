@@ -3,10 +3,6 @@ import '../Styles/Popup.css';
 
 class Popup2 extends React.Component {
 
-  onClose = () => {
-    this.props.closePopup
-  }
-
   render() {
     return (
       <div className='popup'>

@@ -73,6 +73,11 @@ class AlarmForm extends Component {
     this.setState({repeat: data})
   }
 
+  componentDidMount() {
+    const date = new Date();
+    this.setState({ hour: date.getHours(), minute: date.getMinutes() })
+  }
+
   render() {
     return (
       <div className="alarm__form">

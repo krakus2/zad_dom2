@@ -19,10 +19,18 @@ class Alarm extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState){
-      return{
-        hour: nextProps.data.hour,
-        repeat: nextProps.data.repeat,
+    //console.log(prevState)
+      if(nextProps.turnOff !== '' && nextProps.turnOff === prevState.hour && !prevState.repeat.length){
+        return {
+          turnOn: false
+        }
+      } else {
+        return{
+          hour: nextProps.data.hour,
+          repeat: nextProps.data.repeat,
+        }
       }
+
   }
 
   onToogle = e => {

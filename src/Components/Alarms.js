@@ -27,7 +27,8 @@ class Alarms extends Component {
     ring: false,
     showPopup: false,
     minute: '',
-    checkAlarmCounter: 0
+    turnOff: ''
+    //checkAlarmCounter: 0
   }
 
   //posortowac daty chronologicznie (ale nie za pomoca calych dat, tylko godzin i dni tygodnia)
@@ -39,6 +40,7 @@ class Alarms extends Component {
     const alarms = [...this.state.alarms]
     const shortAlarms = [...this.state.shortAlarms]
     const { order } = this.state
+    const date = new Date()
 
     if(alarm.repeat.length){
       alarm.repeat.forEach((elem, i) => {
@@ -47,49 +49,104 @@ class Alarms extends Component {
           day: order[elem],
           turnOn: true
         }
-        if(!shortAlarms.some( elem => (elem.hour === tempObj.hour && elem.day === tempObj.day))){
+        if(!shortAlarms.some( elem2 => (elem2.hour === tempObj.hour && elem2.day === tempObj.day))){
           shortAlarms.push(tempObj)
-          shortAlarms.sort( (a,b) => {
-            if (a.day > b.day) return 1;
-          	if (a.day < b.day) return -1;
-          	if (a.hour > b.hour) return 1;
-          	if (a.hour < b.hour) return -1;
-          })
-          const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
-          this.setState({ shortAlarms, turnOnAlarms, checkAlarmCounter: 0 })
         }
       })
+
+      shortAlarms.sort( (a,b) => {
+        if (a.day > b.day) return 1;
+        if (a.day < b.day) return -1;
+        if (a.hour > b.hour) return 1;
+        if (a.hour < b.hour) return -1;
+      })
+
+      let counter = 0;
+      const shortAlarmsCopy = [...shortAlarms]
+      shortAlarmsCopy.forEach( (elem, i) => {
+        if( (elem.hour <= `${this.format(date.getHours())}:${this.format(date.getMinutes())}` && elem.day === getDay(new Date())) ||
+            ( elem.day < getDay(new Date()))  ){
+            console.log((elem.hour < `${this.format(date.getHours())}:${this.format(date.getMinutes())}` && elem.day == getDay(new Date())), ( elem.day < getDay(new Date())))
+            console.log(elem.hour, `${this.format(date.getHours())}:${this.format(date.getMinutes())}`, elem.day, getDay(new Date()))
+            shortAlarms.splice(i - counter, 1)
+            shortAlarms.push(elem)
+            counter++
+        }
+      })
+      const turnOnAlarms = shortAlarms.filter(elem3 => elem3.turnOn)
+
+      this.setState({ shortAlarms, turnOnAlarms })
     } else {
-      const tempObj = {
-        hour: alarm.hour,
-        day: getDay(new Date()),
-        turnOn: true
+      let tempObj = {}
+      if(Number(`${alarm.hour.split(":")[0]}${alarm.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
+          tempObj.hour = alarm.hour
+          tempObj.day =  getDay(new Date()) + 1
+          tempObj.turnOn = true
+      } else {
+        tempObj.hour = alarm.hour
+        tempObj.day =  getDay(new Date())
+        tempObj.turnOn = true
       }
+
       if(!shortAlarms.some( elem => (elem.hour === tempObj.hour && elem.day === tempObj.day))){
         shortAlarms.push(tempObj)
         shortAlarms.sort( (a,b) => {
-          if (a.day > b.day) return -1;
-          if (a.day < b.day) return 1;
+          if (a.day > b.day) return 1;
+          if (a.day < b.day) return -1;
           if (a.hour > b.hour) return 1;
           if (a.hour < b.hour) return -1;
         })
+        let counter = 0;
+        const shortAlarmsCopy = [...shortAlarms]
+        shortAlarmsCopy.forEach( (elem, i) => {
+          if( (elem.hour <= `${date.getHours()}:${date.getMinutes()}` && elem.day == getDay(new Date())) ||
+              ( elem.day < getDay(new Date()))  ){
+              console.log((elem.hour <= `${date.getHours()}:${date.getMinutes()}`, elem.day === getDay(new Date())), elem.day < getDay(new Date()))
+              shortAlarms.splice(i - counter, 1)
+              shortAlarms.push(elem)
+              counter++
+          }
+        })
+
         const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
-        this.setState({ shortAlarms, turnOnAlarms, checkAlarmCounter: 0 })
+        this.setState({ shortAlarms, turnOnAlarms })
       }
     }
 
-    if(!alarms.some(elem => isEqual(elem, alarm))){
-      alarm.turnOn =
-      alarms.push(alarm)
-      this.setState({ alarms })
-    }
+      if(!alarms.some(elem => isEqual(elem, alarm))){
+        alarms.push(alarm)
+        this.setState({ alarms, turnOff: '' })
+      }
  }
 
   toogleAlarm = data => {
     const shortAlarms = [...this.state.shortAlarms]
+    const date = new Date()
+
+    console.log(data)
+    let index;
+
     if(!Array.isArray(data)){
-      const index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
-      shortAlarms.splice(index, 1, data)
+      if(Number(`${data.hour.split(":")[0]}${data.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
+        console.log("no elo 11111111")
+        index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day  === data.day + 1)
+      } else {
+        console.log("no elo 2222222222")
+        index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
+      }
+      console.log(index)
+
+      let tempObj = {}
+      if(Number(`${data.hour.split(":")[0]}${data.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
+          tempObj.hour = data.hour
+          tempObj.day =  getDay(new Date()) + 1
+          tempObj.turnOn = data.turnOn
+      } else {
+        tempObj.hour = data.hour
+        tempObj.day =  getDay(new Date())
+        tempObj.turnOn = data.turnOn
+      }
+      shortAlarms.splice(index, 1, tempObj)
     } else {
         const indexes = shortAlarms.reduce( (indexes, elem, i) => {
           data.forEach(data2 => {
@@ -118,49 +175,91 @@ class Alarms extends Component {
 
   checkAlarm = () => {
     const date = new Date()
+    const shortAlarms = [...this.state.shortAlarms]
     const turnOnAlarms = [...this.state.turnOnAlarms]
-    const { checkAlarmCounter } = this.state
+    const alarms = [...this.state.alarms]
+    const { order } = this.state
+    //const { checkAlarmCounter } = this.state
     const dateNow = {
       day: getDay(new Date()),
-      hour: `${date.getHours()}:${date.getMinutes()}`
+      hour: `${this.format(date.getHours())}:${this.format(date.getMinutes())}`
     }
 
-    if(checkAlarmCounter === 0){
-      if(turnOnAlarms.length > 0){
-        if(turnOnAlarms[0].day === dateNow.day && turnOnAlarms[0].hour === dateNow.hour){
-          this.setState({ ring: true, showPopup: true})
-        }
-      this.setState({ checkAlarmCounter: checkAlarmCounter+1})
-      }
-    }
 
     if(this.state.minute !== date.getMinutes()){
-      this.setState({ minute: date.getMinutes()}, () => {
+      this.setState( { minute: date.getMinutes()}, () => {
         if(turnOnAlarms.length > 0){
           if(turnOnAlarms[0].day === dateNow.day && turnOnAlarms[0].hour === dateNow.hour){
-            this.setState({ ring: true, showPopup: true})
+            this.setState({ ring: true, showPopup: true, turnOff: dateNow.hour}, () => {
+              this.setState({ turnOff: ''})
+              }) //po kazdym wylaczeniu trzeba ponownie przeleciec po tych cyklicznych i je wlaczyc, dodatkowo znow posortowac
           }
         }
       })
+
     }
+
+  }
+
+
+
+  format = (data) => {
+    return data < 10 ? `0${data}` : `${data}`
   }
 
   togglePopup = () => {
     const shortAlarms = [...this.state.shortAlarms]
+    const alarms = [...this.state.alarms]
+    const { order } = this.state
     shortAlarms[0].turnOn = false;
-    const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
+    const date = new Date()
 
+    const repeat = alarms.filter(elem => elem.repeat.length)
+    const repeatFormatted = repeat.reduce( (sum, elem, i) => {
+      elem.repeat.forEach( elemFor => sum.push({ hour: elem.hour, day: order[elemFor], turnOn: true }) )
+      return sum
+    }, [])
+    const increment = a => a + 1;
+
+    const shortAlarms2 = shortAlarms.map(elem => {
+      if(repeatFormatted.some(elem2 => elem2.hour === elem.hour && elem2.day === elem.day)){
+        //console.log(elem)
+        return {
+          ...elem,
+          turnOn: true
+        }
+      } else {
+        return {
+          ...elem
+        }
+      }
+    })
+
+    console.log(shortAlarms2)
+    let counter = 0;
+    const shortAlarmsCopy = [...shortAlarms2]
+    shortAlarmsCopy.forEach( (elem, i) => {
+      console.log(elem)
+      if( (elem.hour <= `${date.getHours()}:${date.getMinutes()}` && elem.day == getDay(new Date())) ||
+          ( elem.day < getDay(new Date()))  ){
+          //console.log((elem.hour > `${date.getHours()}:${date.getMinutes()}` && elem.day === getDay(new Date())), )
+          shortAlarms2.splice(i - counter, 1)
+          shortAlarms2.push(elem)
+          counter++
+      }
+    })
+
+    const turnOnAlarms = shortAlarms2.filter(elem => elem.turnOn)
      this.setState({
-       shortAlarms,
+       shortAlarms: shortAlarms2,
        turnOnAlarms,
        showPopup: !this.state.showPopup,
        ring: false
      });
    }
 
-
   render() {
-    const { alarms, shortAlarms, ring, showPopup } = this.state
+    const { alarms, shortAlarms, ring, showPopup, turnOff } = this.state
     return (
       <div>
         <MyMenu active="alarm"/>
@@ -171,7 +270,9 @@ class Alarms extends Component {
               return <Alarm
                         data={elem}
                         key={`${elem.hour}_${elem.repeat.map(day => day).join("_") || "today"}`}
-                        toogleAlarm={this.toogleAlarm}/>})}
+                        toogleAlarm={this.toogleAlarm}
+                        turnOff={turnOff}
+                      />})}
           </div>
         </div>
         {ring &&
@@ -179,10 +280,8 @@ class Alarms extends Component {
         }
         {showPopup && <Popup2 closePopup={this.togglePopup}/>}
       </div>
-
     );
   }
-
 }
 
 export default Alarms;
