@@ -11,7 +11,7 @@ class App extends Component {
         <div className="ui container">
           <Route path="/timer" exact component={Timer2Page} />
           <Route path="/worldtime" exact component={WorldTime} />
-          <Route path="/alarm" exact component={Alarms} />
+          <Route path="/" exact component={Alarms} />
         </div>
     );
   }
