@@ -14,7 +14,7 @@ class MyMenu extends Component {
             <Link to='/worldtime'>WorldTime</Link>
           </Menu.Item>
           <Menu.Item active={this.props.active === 'alarm'}>
-            <Link to='/alarm'>Alarm</Link>
+            <Link to='/'>Alarm</Link>
           </Menu.Item>
        </Menu>
       </div>
