@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import getDay from 'date-fns/get_day'
+import '../Styles/Alarm.css';
 
 class Alarm extends Component {
 
@@ -19,7 +20,7 @@ class Alarm extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState){
-    //console.log(prevState)
+    console.log(nextProps)
       if(nextProps.turnOff !== '' && nextProps.turnOff === prevState.hour && !prevState.repeat.length){
         return {
           turnOn: false
@@ -28,6 +29,7 @@ class Alarm extends Component {
         return{
           hour: nextProps.data.hour,
           repeat: nextProps.data.repeat,
+          label: nextProps.data.label,
         }
       }
 
@@ -62,13 +64,31 @@ class Alarm extends Component {
     this.setState({ turnOn })
   }
 
+  onDelete = (e) => {
+    let { turnOn, order } = this.state
+    const hour = e.target.name.split(" ")[0]
+    const repeat = e.target.name.split(" ")[1].split("_").join(" ")
+    this.props.delete({hour, repeat})
+  }
+
   render() {
-    const {hour, repeat, turnOn } = this.state
+    const {hour, repeat, turnOn, label } = this.state
     return (
       <div className="alarm">
+        <div className="alarm__label">
+          {label}
+        </div>
         {hour}<br />{!!repeat.length && repeat.map(elem => elem).join(" ")}
-        <input type="checkbox" checked={turnOn} onChange={this.onToogle}
+        <input type="checkbox"
+          checked={turnOn}
+          onChange={this.onToogle}
           name={`${hour} ${!!repeat.length && repeat.map(elem => elem).join("_")}`}/>
+          <button
+            className="alarm__deleteButton"
+            onClick={this.onDelete}
+            name={`${hour} ${!!repeat.length && repeat.map(elem => elem).join("_")}`}>
+            X
+          </button>
       </div>
     );
   }

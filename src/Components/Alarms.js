@@ -6,12 +6,12 @@ import getDay from 'date-fns/get_day'
 import Alarm from './Alarm'
 import isEqual from 'lodash.isequal';
 import Sound from 'react-sound';
-import Popup2 from './Popup2'
+import Popup2 from './Popup2';
+import InlineError from './Messages/InlineError'
 
 class Alarms extends Component {
   state = {
     alarms: [],
-    errors: {},
     shortAlarms: [],
     turnOnAlarms: [],
     order: {
@@ -23,11 +23,21 @@ class Alarms extends Component {
       "sobota": 6,
       "niedziela": 7
     },
+    order2: {
+      1: "poniedzialek",
+      2: "wtorek",
+      3: "sroda",
+      4: "czwartek",
+      5: "piatek",
+      6: "sobota",
+      7: "niedziela",
+    },
     playStatus: Sound.status.PLAYING,
     ring: false,
     showPopup: false,
     minute: '',
-    turnOff: ''
+    turnOff: '',
+    showMathTask: false
     //checkAlarmCounter: 0
   }
 
@@ -39,7 +49,7 @@ class Alarms extends Component {
  onSubmitForm = (alarm) => {
     const alarms = [...this.state.alarms]
     const shortAlarms = [...this.state.shortAlarms]
-    const { order } = this.state
+    const { order, order2 } = this.state
     const date = new Date()
 
     if(alarm.repeat.length){
@@ -66,8 +76,6 @@ class Alarms extends Component {
       shortAlarmsCopy.forEach( (elem, i) => {
         if( (elem.hour <= `${this.format(date.getHours())}:${this.format(date.getMinutes())}` && elem.day === getDay(new Date())) ||
             ( elem.day < getDay(new Date()))  ){
-            console.log((elem.hour < `${this.format(date.getHours())}:${this.format(date.getMinutes())}` && elem.day == getDay(new Date())), ( elem.day < getDay(new Date())))
-            console.log(elem.hour, `${this.format(date.getHours())}:${this.format(date.getMinutes())}`, elem.day, getDay(new Date()))
             shortAlarms.splice(i - counter, 1)
             shortAlarms.push(elem)
             counter++
@@ -75,7 +83,7 @@ class Alarms extends Component {
       })
       const turnOnAlarms = shortAlarms.filter(elem3 => elem3.turnOn)
 
-      this.setState({ shortAlarms, turnOnAlarms })
+      this.setState({ shortAlarms, turnOnAlarms, error: '' })
     } else {
       let tempObj = {}
       if(Number(`${alarm.hour.split(":")[0]}${alarm.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
@@ -101,7 +109,7 @@ class Alarms extends Component {
         shortAlarmsCopy.forEach( (elem, i) => {
           if( (elem.hour <= `${date.getHours()}:${date.getMinutes()}` && elem.day == getDay(new Date())) ||
               ( elem.day < getDay(new Date()))  ){
-              console.log((elem.hour <= `${date.getHours()}:${date.getMinutes()}`, elem.day === getDay(new Date())), elem.day < getDay(new Date()))
+              //console.log((elem.hour <= `${date.getHours()}:${date.getMinutes()}`, elem.day === getDay(new Date())), elem.day < getDay(new Date()))
               shortAlarms.splice(i - counter, 1)
               shortAlarms.push(elem)
               counter++
@@ -109,32 +117,43 @@ class Alarms extends Component {
         })
 
         const turnOnAlarms = shortAlarms.filter(elem => elem.turnOn)
-        this.setState({ shortAlarms, turnOnAlarms })
+        this.setState({ shortAlarms, turnOnAlarms, error: '' })
       }
     }
-
-      if(!alarms.some(elem => isEqual(elem, alarm))){
-        alarms.push(alarm)
-        this.setState({ alarms, turnOff: '' })
+      if(alarm.repeat.length){
+        if(!alarms.some(elem => elem.hour === alarm.hour
+          && alarm.repeat.some(day => (elem.repeat.join(" ").indexOf(day) > -1))
+        )){
+          alarms.push(alarm)
+          this.setState({ alarms, turnOff: '' })
+        } else {
+          this.setState({ error: "Don't add two alarms, at the same time" })
+        }
+      } else {
+        if ( !alarms.some(elem =>  !elem.repeat.length ? elem.hour === alarm.hour :
+            ( elem.repeat.join(" ") === order2[getDay(new Date())] && elem.hour === alarm.hour) )
+        ){
+          alarms.push(alarm)
+          this.setState({ alarms, turnOff: '' })
+        } else {
+          this.setState({ error: "Don't add two alarms, at the same time" })
+        }
       }
+
  }
 
   toogleAlarm = data => {
     const shortAlarms = [...this.state.shortAlarms]
     const date = new Date()
 
-    console.log(data)
     let index;
 
     if(!Array.isArray(data)){
       if(Number(`${data.hour.split(":")[0]}${data.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
-        console.log("no elo 11111111")
         index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day  === data.day + 1)
       } else {
-        console.log("no elo 2222222222")
         index = shortAlarms.findIndex(elem => elem.hour === data.hour && elem.day === data.day)
       }
-      console.log(index)
 
       let tempObj = {}
       if(Number(`${data.hour.split(":")[0]}${data.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
@@ -178,16 +197,22 @@ class Alarms extends Component {
     const shortAlarms = [...this.state.shortAlarms]
     const turnOnAlarms = [...this.state.turnOnAlarms]
     const alarms = [...this.state.alarms]
-    const { order } = this.state
+    const { order, order2} = this.state
     //const { checkAlarmCounter } = this.state
     const dateNow = {
       day: getDay(new Date()),
       hour: `${this.format(date.getHours())}:${this.format(date.getMinutes())}`
     }
 
+    let variable = false
 
     if(this.state.minute !== date.getMinutes()){
-      this.setState( { minute: date.getMinutes()}, () => {
+      if(turnOnAlarms.length){
+         variable = alarms.some(elem => elem.hour === turnOnAlarms[0].hour &&
+          elem.repeat.length ? elem.repeat.join(" ").includes(order2[turnOnAlarms[0].day]) : getDay(new Date()) ===  turnOnAlarms[0].day &&
+          elem.taskToTurnOff === true)
+      }
+      this.setState( { minute: date.getMinutes(), showMathTask: variable}, () => {
         if(turnOnAlarms.length > 0){
           if(turnOnAlarms[0].day === dateNow.day && turnOnAlarms[0].hour === dateNow.hour){
             this.setState({ ring: true, showPopup: true, turnOff: dateNow.hour}, () => {
@@ -200,8 +225,6 @@ class Alarms extends Component {
     }
 
   }
-
-
 
   format = (data) => {
     return data < 10 ? `0${data}` : `${data}`
@@ -219,7 +242,7 @@ class Alarms extends Component {
       elem.repeat.forEach( elemFor => sum.push({ hour: elem.hour, day: order[elemFor], turnOn: true }) )
       return sum
     }, [])
-    const increment = a => a + 1;
+    //const increment = a => a + 1;
 
     const shortAlarms2 = shortAlarms.map(elem => {
       if(repeatFormatted.some(elem2 => elem2.hour === elem.hour && elem2.day === elem.day)){
@@ -235,11 +258,9 @@ class Alarms extends Component {
       }
     })
 
-    console.log(shortAlarms2)
     let counter = 0;
     const shortAlarmsCopy = [...shortAlarms2]
     shortAlarmsCopy.forEach( (elem, i) => {
-      console.log(elem)
       if( (elem.hour <= `${date.getHours()}:${date.getMinutes()}` && elem.day == getDay(new Date())) ||
           ( elem.day < getDay(new Date()))  ){
           //console.log((elem.hour > `${date.getHours()}:${date.getMinutes()}` && elem.day === getDay(new Date())), )
@@ -258,13 +279,57 @@ class Alarms extends Component {
      });
    }
 
+   deleteAlarm = data => {
+     const { alarms, shortAlarms, order } = this.state
+     let table = []
+
+     if(data.repeat !== "false"){
+       table = data.repeat.split(" ").map(elem => {
+         return {
+           hour: data.hour,
+           day: order[elem]
+         }
+       })
+     } else {
+       const date = new Date();
+       const hourNow = `${date.getHours()}${date.getMinutes()}`
+       if(Number(data.hour.replace(":", "")) <= Number(hourNow)){
+         table.push({
+           hour: data.hour,
+           day: getDay(new Date()) + 1
+         })
+       } else {
+         table.push({
+           hour: data.hour,
+           day: getDay(new Date())
+         })
+       }
+     }
+
+     console.log(table)
+     const filteredAlarms = alarms.filter(elem => {
+       return !(elem.hour === data.hour && elem.repeat.length ? elem.repeat.join(" ") === data.repeat : data.repeat === "false")
+     })
+
+     const filteredShortAlarms = shortAlarms.filter(elem => {
+       return !table.some( tableElem => tableElem.hour === elem.hour && tableElem.day === elem.day)
+     })
+
+     const turnOnAlarms = filteredShortAlarms.filter(elem => elem.turnOn)
+     //console.log(filteredAlarms, filteredShortAlarms)
+     this.setState({ alarms: filteredAlarms, shortAlarms: filteredShortAlarms, turnOnAlarms})
+   }
+
   render() {
-    const { alarms, shortAlarms, ring, showPopup, turnOff } = this.state
+    const { alarms, shortAlarms, ring, showPopup, turnOff, error, showMathTask } = this.state
     return (
       <div>
         <MyMenu active="alarm"/>
         <div className="alarm">
-          <AlarmForm onSubmit={this.onSubmitForm}/>
+          <div className="alarm__alarmForm">
+            <AlarmForm onSubmit={this.onSubmitForm}/>
+            {!!error && <InlineError text={error} />}
+          </div>
           <div className="alarm__alarms">
             {alarms.map(elem => {
               return <Alarm
@@ -272,13 +337,14 @@ class Alarms extends Component {
                         key={`${elem.hour}_${elem.repeat.map(day => day).join("_") || "today"}`}
                         toogleAlarm={this.toogleAlarm}
                         turnOff={turnOff}
+                        delete={this.deleteAlarm}
                       />})}
           </div>
         </div>
         {ring &&
           <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" loop={true}/>
         }
-        {showPopup && <Popup2 closePopup={this.togglePopup}/>}
+        {showPopup && <Popup2 closePopup={this.togglePopup} mathTask={showMathTask}/>}
       </div>
     );
   }

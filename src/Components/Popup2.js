@@ -8,6 +8,7 @@ class Popup2 extends React.Component {
       <div className='popup'>
         <div className='popup__inner'>
           "No elo"
+          {this.props.mathTask && "Działa chuju"}
         <button onClick={this.props.closePopup}>close me</button>
         </div>
       </div>

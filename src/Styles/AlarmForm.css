@@ -1,14 +1,14 @@
-.alarm__form{
+.alarmForm{
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-family: 'Lato', sans-serif;
-  font-weight: 700;
+  font-weight: 400;
   position: relative;
 }
 
-.alarm__form__buttonRow{
+.alarmForm__buttonRow{
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -22,19 +22,65 @@
   border: none;
 }
 
-.buttonPM{
+.buttonPM {
+  position: relative;
+  display: block;
+  margin: 0px auto;
+  padding: 0;
   width: 100px;
   height: 100px;
-  border-radius: 4px;
-  border: none;
-  background-color: purple;
-  color: white;
-  outline: none
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  background-color: #2ecc71;
+  color: #ecf0f1;
+  transition: background-color .3s;
 }
 
-.buttonPM:hover{ background-color: blue; cursor: pointer;}
+.buttonPM:hover, .buttonPM:focus {
+  background-color: #27ae60;
+  cursor: pointer;
+}
 
-.buttonPM:active{ background-color: black; cursor: pointer;}
+.buttonPM > * {
+  position: relative;
+}
+
+.buttonPM span {
+  display: block;
+  padding: 12px 24px;
+}
+
+.buttonPM:before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  display: block;
+  width: 0;
+  padding-top: 0;
+
+  border-radius: 100%;
+
+  background-color: rgba(236, 240, 241, .3);
+
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.buttonPM:active:before {
+  width: 140%;
+  padding-top: 140%;
+
+  transition: width .2s ease-out, padding-top .2s ease-out;
+}
 
 .buttonPM:nth-child(1){ margin-right: 4px; }
 
@@ -47,14 +93,46 @@
 .buttonSubmit{
   width: 208px;
   height: 100px;
-  border-radius: 4px;
-  border: none;
-  background-color: red;
-  color: white;
-  outline: none;
-  margin-top: 10px;
+  margin-top: 20px;
+  background-color: #e67e22
 }
 
-.buttonSubmit:hover{ background-color: blue; cursor: pointer;}
+.buttonSubmit:hover, .buttonSubmit:focus{
+  width: 208px;
+  height: 100px;
+  margin-top: 20px;
+  background-color: #d35400
+}
 
-.buttonSubmit:active{ background-color: black; cursor: pointer;}
+.alarmForm__repeatRow{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  cursor: pointer;
+  padding: 20px;
+  margin: 10px 0;
+  transition: 0.3s;
+  border-bottom: 4px solid transparent;
+  font-size: 15px;
+
+}
+.alarmForm__repeatRow:hover{
+  box-shadow: 0px 0px 71px -15px rgba(0,0,0,0.75);
+  border-bottom: 4px solid #2ecc71;
+}
+
+.alarmForm__repeatRow__days{
+  font-size: 20px;
+  margin-right: 5px;
+  margin-left: 5px
+}
+
+.alarmForm__repeatRow__days--active{
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.alarmForm__snoozeTaskRow{
+
+}

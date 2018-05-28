@@ -12,7 +12,8 @@ class AlarmForm extends Component {
     taskToTurnOff: false,
     snooze: false,
     label: 'Alarm',
-    showPopup: false
+    showPopup: false,
+    dayArray: ["poniedzialek", "wtorek", "sroda", "czwartek", "piatek", "sobota", "niedziela"]
   }
 
   togglePopup = () => {
@@ -59,7 +60,7 @@ class AlarmForm extends Component {
     const objectAlarm = {}
     objectAlarm.hour = `${this.format(this.state.hour)}:${this.format(this.state.minute)}`
     objectAlarm.repeat = [...this.state.repeat]
-    objectAlarm.snooze = this.state.snooze
+    //objectAlarm.snooze = this.state.snooze
     objectAlarm.taskToTurnOff = this.state.taskToTurnOff
     objectAlarm.label = this.state.label
     this.props.onSubmit(objectAlarm)
@@ -67,6 +68,10 @@ class AlarmForm extends Component {
 
   short = (data) => {
     return `${data.slice(0,3)}.`
+  }
+
+  maxShort = (data) => {
+    return `${data.slice(0,1).toUpperCase()}`
   }
 
   addDays = (data) => {
@@ -80,33 +85,42 @@ class AlarmForm extends Component {
 
   render() {
     return (
-      <div className="alarm__form">
-          <div className="alarm__form__buttonRow">
+      <div className="alarmForm">
+          <div className="alarmForm__buttonRow">
             <button className="buttonPM" name="hour" onClick={this.onClick} >+</button>
             <button className="buttonPM" name="minute" onClick={this.onClick}>+</button>
           </div>
-          <div className="alarm__form__indicatorRow">
+          <div className="alarmForm__indicatorRow">
             <input type="text" name="hour" className="inputIndicator" value={this.format(this.state.hour)} onChange={this.onChange}></input>
             <input type="text" name="minute" className="inputIndicator" value={this.format(this.state.minute)} onChange={this.onChange}></input>
           </div>
-          <div className="alarm__form__buttonRow">
+          <div className="alarmForm__buttonRow">
             <button className="buttonPM" name="hour" onClick={this.onClick}>-</button>
             <button className="buttonPM" name="minute" onClick={this.onClick}>-</button>
           </div>
-          <div className="alarm__form__repeatRow" onClick={this.togglePopup}>
-            Repeat: <span>{this.state.repeat.map(elem => `${this.short(elem)} `)}</span>
+          <div className="alarmForm__repeatRow" onClick={this.togglePopup}>
+            <span className="alarmForm__repeatRow__days">
+              {this.state.dayArray.map(elem => (this.state.repeat.some(day => elem === day) ?
+                <span className="alarmForm__repeatRow__days--active alarmForm__repeatRow__days">
+                  {`${this.maxShort(elem)}`}
+                </span> :
+                <span className="alarmForm__repeatRow__days">
+                  {`${this.maxShort(elem)}`}
+                </span>
+              )) }
+            </span>
           </div>
-          <div className="alarm__form__snoozeTaskRow" >
+          {/*}<div className="alarm__form__snoozeTaskRow" >
             Snooze <input type="checkbox" onClick={this.toggleSnoozeTask} checked={this.state.snooze} name='snooze'></input>
-          </div>
-          <div className="alarm__form__snoozeTaskRow" >
+          </div>{*/}
+          <div className="alarmForm__snoozeTaskRow" >
             Math task to turn off <input type="checkbox" onClick={this.toggleSnoozeTask} checked={this.state.taskToTurnOff} name='taskToTurnOff'></input>
           </div>
-          <div className="alarm__form__AlarmNameRow" >
+          <div className="alarmForm__AlarmNameRow" >
             Label <input type="text" onChange={this.updateLabel} value={this.state.label} name="label"
-              onClick={this.clearLabel} className="alarm__form__AlarmNameRow__text"></input>
+              onClick={this.clearLabel} className="alarmForm__AlarmNameRow__text"></input>
           </div>
-          <button className="buttonSubmit" onClick={this.onSubmit}>Add alarm</button>
+          <button className="buttonPM buttonSubmit" onClick={this.onSubmit}>Add alarm</button>
           {this.state.showPopup ?
           <Popup
             closePopup={this.togglePopup}
