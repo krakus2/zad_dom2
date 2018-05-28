@@ -11,7 +11,7 @@ class AlarmForm extends Component {
     repeat: [],
     taskToTurnOff: false,
     snooze: false,
-    label: 'Alarm',
+    label: '',
     showPopup: false,
     dayArray: ["poniedzialek", "wtorek", "sroda", "czwartek", "piatek", "sobota", "niedziela"]
   }
@@ -62,7 +62,8 @@ class AlarmForm extends Component {
     objectAlarm.repeat = [...this.state.repeat]
     //objectAlarm.snooze = this.state.snooze
     objectAlarm.taskToTurnOff = this.state.taskToTurnOff
-    objectAlarm.label = this.state.label
+    objectAlarm.label = !this.state.label.length ? "Alarm" : this.state.label
+    this.setState({ repeat: []})
     this.props.onSubmit(objectAlarm)
   }
 
@@ -101,10 +102,10 @@ class AlarmForm extends Component {
           <div className="alarmForm__repeatRow" onClick={this.togglePopup}>
             <span className="alarmForm__repeatRow__days">
               {this.state.dayArray.map(elem => (this.state.repeat.some(day => elem === day) ?
-                <span className="alarmForm__repeatRow__days--active alarmForm__repeatRow__days">
+                <span className="alarmForm__repeatRow__days--active alarmForm__repeatRow__days" key={elem}>
                   {`${this.maxShort(elem)}`}
                 </span> :
-                <span className="alarmForm__repeatRow__days">
+                <span className="alarmForm__repeatRow__days" key={elem}>
                   {`${this.maxShort(elem)}`}
                 </span>
               )) }
@@ -113,13 +114,24 @@ class AlarmForm extends Component {
           {/*}<div className="alarm__form__snoozeTaskRow" >
             Snooze <input type="checkbox" onClick={this.toggleSnoozeTask} checked={this.state.snooze} name='snooze'></input>
           </div>{*/}
-          <div className="alarmForm__snoozeTaskRow" >
+          {/*}<div className="alarmForm__snoozeTaskRow" >
             Math task to turn off <input type="checkbox" onClick={this.toggleSnoozeTask} checked={this.state.taskToTurnOff} name='taskToTurnOff'></input>
+          </div>{*/}
+          <div className="md-checkbox">
+            <input id="i2" type="checkbox" onClick={this.toggleSnoozeTask} checked={this.state.taskToTurnOff} name='taskToTurnOff'></input>
+            <label htmlFor="i2">  Math task to turn off</label>
           </div>
-          <div className="alarmForm__AlarmNameRow" >
+          {/*}<div className="alarmForm__AlarmNameRow" >
             Label <input type="text" onChange={this.updateLabel} value={this.state.label} name="label"
               onClick={this.clearLabel} className="alarmForm__AlarmNameRow__text"></input>
-          </div>
+          </div>{*/}
+          <div className="group">
+             <input type="text" className="alarmForm__AlarmNameRow__input" required
+               onChange={this.updateLabel} value={this.state.label} name="label" onClick={this.clearLabel}></input>
+             <span className="highlight"></span>
+             <span className="bar"></span>
+             <label className="alarmForm__AlarmNameRow__label">Alarm Label</label>
+           </div>
           <button className="buttonPM buttonSubmit" onClick={this.onSubmit}>Add alarm</button>
           {this.state.showPopup ?
           <Popup

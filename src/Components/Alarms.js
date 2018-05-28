@@ -279,46 +279,47 @@ class Alarms extends Component {
      });
    }
 
-   deleteAlarm = data => {
-     const { alarms, shortAlarms, order } = this.state
-     let table = []
+ deleteAlarm = data => {
+   const { alarms, shortAlarms, order } = this.state
+   let table = []
+   console.log(data)
 
-     if(data.repeat !== "false"){
-       table = data.repeat.split(" ").map(elem => {
-         return {
-           hour: data.hour,
-           day: order[elem]
-         }
+   if(data.repeat !== "false"){
+     table = data.repeat.split(" ").map(elem => {
+       return {
+         hour: data.hour,
+         day: order[elem]
+       }
+     })
+   } else {
+     const date = new Date();
+     const hourNow = `${date.getHours()}${date.getMinutes()}`
+     if(Number(data.hour.replace(":", "")) <= Number(hourNow)){
+       table.push({
+         hour: data.hour,
+         day: getDay(new Date()) + 1
        })
      } else {
-       const date = new Date();
-       const hourNow = `${date.getHours()}${date.getMinutes()}`
-       if(Number(data.hour.replace(":", "")) <= Number(hourNow)){
-         table.push({
-           hour: data.hour,
-           day: getDay(new Date()) + 1
-         })
-       } else {
-         table.push({
-           hour: data.hour,
-           day: getDay(new Date())
-         })
-       }
+       table.push({
+         hour: data.hour,
+         day: getDay(new Date())
+       })
      }
-
-     console.log(table)
-     const filteredAlarms = alarms.filter(elem => {
-       return !(elem.hour === data.hour && elem.repeat.length ? elem.repeat.join(" ") === data.repeat : data.repeat === "false")
-     })
-
-     const filteredShortAlarms = shortAlarms.filter(elem => {
-       return !table.some( tableElem => tableElem.hour === elem.hour && tableElem.day === elem.day)
-     })
-
-     const turnOnAlarms = filteredShortAlarms.filter(elem => elem.turnOn)
-     //console.log(filteredAlarms, filteredShortAlarms)
-     this.setState({ alarms: filteredAlarms, shortAlarms: filteredShortAlarms, turnOnAlarms})
    }
+
+   console.log(table)
+   const filteredAlarms = alarms.filter(elem => {
+     return !(elem.hour === data.hour && (elem.repeat.length ? elem.repeat.join(" ") === data.repeat : data.repeat === "false"))
+   })
+
+   const filteredShortAlarms = shortAlarms.filter(elem => {
+     return !table.some( tableElem => tableElem.hour === elem.hour && tableElem.day === elem.day)
+   })
+
+   const turnOnAlarms = filteredShortAlarms.filter(elem => elem.turnOn)
+   //console.log(filteredAlarms, filteredShortAlarms)
+   this.setState({ alarms: filteredAlarms, shortAlarms: filteredShortAlarms, turnOnAlarms})
+ }
 
   render() {
     const { alarms, shortAlarms, ring, showPopup, turnOff, error, showMathTask } = this.state
