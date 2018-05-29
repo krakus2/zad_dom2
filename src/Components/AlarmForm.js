@@ -84,16 +84,39 @@ class AlarmForm extends Component {
     this.setState({ hour: date.getHours(), minute: date.getMinutes() })
   }
 
+  onMouseDown = () => {
+    this.timer = setInterval(() => {
+      let { hour } = this.state
+      // the function can do whatever you need it to
+        if(hour < 23 && hour >= 0){
+        this.setState({ hour: hour + 1})
+      } else if (hour === 23){
+        this.setState({ hour: 0})
+      }
+    }, 75);
+}
+
+  onMouseUp = () => {
+    clearInterval(this.timer);
+    console.log("Mouse is Up!");
+  }
+
+  onMouseLeave = () => {
+    clearInterval(this.timer);
+    console.log("Mouse is no longer on element!");
+  }
+
   render() {
     return (
       <div className="alarmForm">
           <div className="alarmForm__buttonRow">
-            <button className="buttonPM" name="hour" onClick={this.onClick} >+</button>
+            <button className="buttonPM" name="hour" /*onClick={this.onClick}*/ onMouseDown={this.onMouseDown}
+              onMouseUp={this.onMouseUp} onMouseLeave={this.onMouseLeave}>+</button>
             <button className="buttonPM" name="minute" onClick={this.onClick}>+</button>
           </div>
           <div className="alarmForm__indicatorRow">
-            <input type="text" name="hour" className="inputIndicator" value={this.format(this.state.hour)} onChange={this.onChange}></input>
-            <input type="text" name="minute" className="inputIndicator" value={this.format(this.state.minute)} onChange={this.onChange}></input>
+            <input type="text" name="hour" className="inputIndicator" value={this.state.hour} onChange={this.onChange} disabled></input> {/*this.format{*/}
+            <input type="text" name="minute" className="inputIndicator" value={this.state.minute} onChange={this.onChange}></input>
           </div>
           <div className="alarmForm__buttonRow">
             <button className="buttonPM" name="hour" onClick={this.onClick}>-</button>
