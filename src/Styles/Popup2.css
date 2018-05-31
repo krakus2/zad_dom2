@@ -45,7 +45,6 @@
 .task__result{
  border: 0;
  border-bottom: 2px solid var(--theDarkestBlueH);
- width: 20px;
  font-size: 14px;
  background: transparent;
  outline: none;

@@ -35,6 +35,8 @@ class Popup2 extends React.Component {
 
   render() {
     const { x, y, message } = this.state
+    let style;
+    (x + y) >= 100 ? style = {width: "25px"} : style = {width: "20px"}
     return (
       <div className='popup2'>
         <div className='popup2__inner'>
@@ -43,7 +45,8 @@ class Popup2 extends React.Component {
             this.props.mathTask &&
             <div className="popup2__task">
               {`${x} + ${y} = `}
-              <input type="text" onChange={this.onChange} name="result" className="task__result"></input>
+              <input type="text" onChange={this.onChange} name="result" className="task__result"
+                style={style}></input>
             </div>
           }
         {!!message && <InlineError text={"You are wrong!"} />}
