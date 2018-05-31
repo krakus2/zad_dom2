@@ -8,6 +8,7 @@ import isEqual from 'lodash.isequal';
 import Sound from 'react-sound';
 import Popup2 from './Popup2';
 import InlineError from './Messages/InlineError'
+import { CSSTransitionGroup } from 'react-transition-group'
 
 class Alarms extends Component {
   state = {
@@ -51,12 +52,14 @@ class Alarms extends Component {
     const shortAlarms = [...this.state.shortAlarms]
     const { order, order2 } = this.state
     const date = new Date()
+    console.log(alarm)
 
     if(alarm.repeat.length){
       alarm.repeat.forEach((elem, i) => {
         const tempObj = {
           hour: alarm.hour,
           day: order[elem],
+          //taskToTurnOff: alarm.taskToTurnOff,
           turnOn: true
         }
         if(!shortAlarms.some( elem2 => (elem2.hour === tempObj.hour && elem2.day === tempObj.day))){
@@ -89,10 +92,12 @@ class Alarms extends Component {
       if(Number(`${alarm.hour.split(":")[0]}${alarm.hour.split(":")[1]}`) <= Number(`${date.getHours()}${date.getMinutes()}`)){
           tempObj.hour = alarm.hour
           tempObj.day =  getDay(new Date()) + 1
+          //tempObj.taskToTurnOff =  alarm.taskToTurnOff
           tempObj.turnOn = true
       } else {
         tempObj.hour = alarm.hour
         tempObj.day =  getDay(new Date())
+        //tempObj.taskToTurnOff =  alarm.taskToTurnOff
         tempObj.turnOn = true
       }
 
@@ -198,7 +203,6 @@ class Alarms extends Component {
     const turnOnAlarms = [...this.state.turnOnAlarms]
     const alarms = [...this.state.alarms]
     const { order, order2} = this.state
-    //const { checkAlarmCounter } = this.state
     const dateNow = {
       day: getDay(new Date()),
       hour: `${this.format(date.getHours())}:${this.format(date.getMinutes())}`
@@ -326,21 +330,30 @@ class Alarms extends Component {
     return (
       <div>
         <MyMenu active="alarm"/>
-        <div className="alarm">
-          <div className="alarm__alarmForm">
+        <div className="alarmSite">
+          <div className="alarmSite__left">
             <AlarmForm onSubmit={this.onSubmitForm}/>
             {!!error && <InlineError text={error} />}
           </div>
-          <div className="alarm__alarms">
-            {alarms.map(elem => {
-              return <Alarm
-                        data={elem}
-                        key={`${elem.hour}_${elem.repeat.map(day => day).join("_") || "today"}`}
-                        toogleAlarm={this.toogleAlarm}
-                        turnOff={turnOff}
-                        delete={this.deleteAlarm}
-                      />})}
-          </div>
+          {/*}<div className="alarm__alarms">{*/}
+          <CSSTransitionGroup
+            transitionEnterTimeout={500}
+            transitionLeaveTimeout={500}
+            className='alarmSite__alarms'
+            component='div'
+            transitionName='alarmSite__alarms'
+          >
+            {alarms.map(elem =>
+              <Alarm
+                data={elem}
+                key={`${elem.hour}_${elem.repeat.map(day => day).join("_") || "today"}`}
+                toogleAlarm={this.toogleAlarm}
+                turnOff={turnOff}
+                delete={this.deleteAlarm}
+              />
+                    )}
+          </CSSTransitionGroup>
+          {/*}</div>{*/}
         </div>
         {ring &&
           <Sound playStatus={this.state.playStatus} url="https://raw.githubusercontent.com/krakus2/zad_dom2/master/src/assets/alarm1.mp3" loop={true}/>

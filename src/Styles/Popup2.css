@@ -1,0 +1,119 @@
+.popup2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /*top: calc(50vh - 200px);
+  left: calc(50vw - 175px);*/
+  width: 100vw;
+  height: 100vh;
+  margin: auto;
+  background-color: rgba(0,0,0, 0.5);
+}
+.popup2__inner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: calc(50vh - 200px);
+  left: calc(50vw - 90px);
+  height: auto;
+  width: 220px;
+  margin: auto;
+  background: white;
+  padding: 15px;
+  border-radius: 2px;
+  box-shadow: 0 10px 6px -6px rgba(0, 0, 0, 0.5);
+}
+
+.popup2__title{
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--theDarkestBlueH);
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.popup2__task{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.task__result{
+ border: 0;
+ border-bottom: 2px solid var(--theDarkestBlueH);
+ width: 20px;
+ font-size: 14px;
+ background: transparent;
+ outline: none;
+ margin-left: 2px;
+ position: relative;
+ top: 2px;
+}
+
+.popup2__closeButton{
+
+}
+
+.popup2__closeButton {
+  position: relative;
+  display: block;
+  margin: 0px auto;
+  padding: 0;
+  width: 80px;
+  height: 30px;
+  overflow: hidden;
+  border-width: 0;
+  outline: none;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  background-color: var(--blueH);
+  color: #ecf0f1;
+  transition: background-color .3s;
+}
+
+.popup2__closeButton:hover, .popup2__closeButton:focus {
+  background-color: var(--darkerBlueH);
+  cursor: pointer;
+}
+
+.popup2__closeButton > * {
+  position: relative;
+}
+
+.popup2__closeButton span {
+  display: block;
+  padding: 12px 24px;
+}
+
+.popup2__closeButton:before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  display: block;
+  width: 0;
+  padding-top: 0;
+
+  border-radius: 100%;
+
+  /*background-color: rgba(236, 240, 241, .3);*/
+  background-color: var(--theDarkestBlueH);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.popup2__closeButton:active:before {
+  width: 140%;
+  padding-top: 140%;
+
+  transition: width .2s ease-out, padding-top .2s ease-out;
+}

@@ -71,24 +71,44 @@ class Alarm extends Component {
     this.props.delete({hour, repeat})
   }
 
+  short = (data) => {
+    return `${data.slice(0,3)}`
+  }
+
   render() {
     const {hour, repeat, turnOn, label } = this.state
     return (
       <div className="alarm">
-        <div className="alarm__label">
-          {label}
-        </div>
-        {hour}<br />{!!repeat.length && repeat.map(elem => elem).join(" ")}
-        <input type="checkbox"
-          checked={turnOn}
-          onChange={this.onToogle}
-          name={`${hour} ${!!repeat.length && repeat.map(elem => elem).join("_")}`}/>
+        <div className="alarm__line1">
+          <div className="alarm__hour">
+            {hour}
+          </div>
+          <input type="checkbox"
+            id="alarmOnOFF"
+            className="alarmOnOFF"
+            checked={turnOn}
+            onChange={this.onToogle}
+            name={`${hour} ${!!repeat.length && repeat.map(elem => elem).join("_")}`}
+          />
+          <label className="alarmOnOFFLabel" htmlFor="alarmOnOFF">Toggle</label>
           <button
             className="alarm__deleteButton"
             onClick={this.onDelete}
             name={`${hour} ${!!repeat.length && repeat.map(elem => elem).join("_")}`}>
-            X
+             &times;
           </button>
+        </div>
+
+        <div className="alarm__label">
+          {label}
+          {!!repeat.length &&
+            <span className="alarm__label__repeat">
+              <span>Repeat:  </span>
+              {repeat.map(elem => this.short(elem)).join(" ")}
+            </span>
+          }
+        </div>
+
       </div>
     );
   }

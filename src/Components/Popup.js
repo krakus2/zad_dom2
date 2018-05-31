@@ -49,18 +49,21 @@ class Popup extends React.Component {
     return (
       <div className='popup'>
         <div className='popup__inner'>
+        <div className="popup__inner__title">Repeat</div>
           {this.state.days.map( (elem, i) => (
             <div key={elem} className="popup__inner__row">
               <div className="popup__inner__row__day">
                 <span>{elem}</span>
               </div>
-              <div>
-                <input type="checkbox" name={`${elem}`} onClick={this.onToogle}
-                  checked={this.state.daysActive.includes(elem)}></input>
+              <div className="popup__boxDiv">
+                <input id={`popup__checkbox${i}`} className="popup__checkbox" type="checkbox" onClick={this.onToogle} checked={this.state.daysActive.includes(elem)} name={`${elem}`}></input>
+                <label htmlFor={`popup__checkbox${i}`}></label>
+                {/*}<input type="checkbox" name={`${elem}`} onClick={this.onToogle}
+                  checked={this.state.daysActive.includes(elem)}></input>{*/}
               </div>
             </div>
           ))}
-        <button onClick={this.props.closePopup}>close me</button>
+        <button className="popupClose" onClick={this.props.closePopup}>&times;</button>
         </div>
       </div>
     );

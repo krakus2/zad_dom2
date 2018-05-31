@@ -1,3 +1,103 @@
+.alarm{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90px;
+  margin-top: 30px;
+  border-bottom: 2px solid transparent;
+  transition: 0.2s;
+  padding: 5px;
+}
+
+.alarm:hover{
+  box-shadow: 0px 0px 71px -15px rgba(0,0,0,0.75);
+  border-bottom: 2px solid var(--blue);
+  transform:scale(1.01, 1.01);
+}
+
+.alarm:first-child{
+  margin-top: 0;
+}
+
+.alarm__line1{
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.alarm__label__repeat{
+  margin-left: 10px;
+}
+
+@import url('https://fonts.googleapis.com/css?family=Russo+One');
+.alarm__hour{
+  font-family: 'Russo One', sans-serif;
+  font-size: 45px;
+  font-weight: bold;
+}
+
 .alarm__label{
+  display: flex;
+  flex-direction: row;
   margin-right: 5px;
+  font-size: 12px;
+}
+
+.alarm__deleteButton{
+  position: relative;
+  background-color: transparent;
+  border: none;
+  top: -17px;
+  left: 11px;
+  font-size: 20px;
+  outline: none;
+
+}
+
+.alarm__deleteButton:hover{
+  cursor: pointer;
+}
+
+.alarmOnOFF{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+.alarmOnOFFLabel {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 40px;
+	height: 20px;
+	background: grey;
+	display: block;
+	border-radius: 100px;
+	position: relative;
+  margin-left: 100px;
+  top: 20px;
+}
+
+.alarmOnOFFLabel:after {
+	content: '';
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: 18px;
+	height: 18px;
+	background: #fff;
+	border-radius: 18px;
+	transition: 0.3s;
+}
+
+.alarmOnOFF:checked + .alarmOnOFFLabel {
+	background: var(--blue);
+}
+
+.alarmOnOFF:checked + .alarmOnOFFLabel:after {
+	left: calc(100% - 1px);
+	transform: translateX(-100%);
+}
+
+.alarmOnOFFLabel:active:after {
+	width: 26px;
 }
