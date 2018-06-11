@@ -341,15 +341,20 @@ class Alarms extends Component {
 
   render() {
     const { alarms, shortAlarms, ring, showPopup, turnOff, error, showMathTask } = this.state
+    const style = {
+      width: "205px",
+      marginBottom: "10px",
+      textAlign: "center"
+    }
     return (
       <div>
         <MyMenu active="alarm"/>
         <div className="alarmSite">
           <div className="alarmSite__left">
             <AlarmForm onSubmit={this.onSubmitForm}/>
-            {!!error && <InlineError text={error} />}
+            {!!error && <InlineError text={error} style={style}/>}
           </div>
-          {/*}<div className="alarm__alarms">{}
+          {/*}<div className="alarm__alarms">{*/}
           <CSSTransitionGroup
             transitionEnterTimeout={500}
             transitionLeaveTimeout={500}

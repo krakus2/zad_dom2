@@ -49,6 +49,11 @@ class TimerForm extends Component {
 
   render() {
     const { data, errors } = this.state;
+    const style = {
+      width: "auto",
+      marginBottom: "0",
+      textAlign: "left"
+    }
     return (
         <div className='TimerForm' style={{marginTop: "20px"}}>
           <Form onSubmit={this.onSubmit}>
@@ -62,7 +67,7 @@ class TimerForm extends Component {
                 value={data.from}
                 onChange={this.onChange}
               />
-              {errors.from && <InlineError text={errors.from} /> }
+              {errors.from && <InlineError text={errors.from} style={style} /> }
             </Form.Field>
             <Form.Field error={!!errors.to}>
               <label htmlFor='to'>To</label>
@@ -74,7 +79,7 @@ class TimerForm extends Component {
                 value={data.to}
                 onChange={this.onChange}
               />
-              {errors.to && <InlineError text={errors.to} /> }
+              {errors.to && <InlineError text={errors.to} style={style} /> }
             </Form.Field>
             <Button animated='fade' size='large' color='orange' fluid>
               <Button.Content visible>

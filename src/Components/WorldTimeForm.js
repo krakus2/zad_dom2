@@ -41,6 +41,11 @@ class WorldTimeForm extends Component {
 
   render() {
     const { city, errors } = this.state;
+    const style = {
+      width: "auto",
+      marginBottom: "0",
+      textAlign: "left"
+    }
     return (
         <div className='WordTimeForm' style={{marginTop: "20px"}}>
           <Form onSubmit={this.onSubmit}>
@@ -54,7 +59,7 @@ class WorldTimeForm extends Component {
                 value={city}
                 onChange={this.onChange}
               />
-              {errors.city && <InlineError text={errors.city} /> }
+              {errors.city && <InlineError text={errors.city} style={style}/> }
             </Form.Field>
             <Button animated='fade' size='large' color='orange' fluid>
               <Button.Content visible>
