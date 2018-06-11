@@ -9,6 +9,7 @@ import Sound from 'react-sound';
 import Popup2 from './Popup2';
 import InlineError from './Messages/InlineError'
 import { CSSTransitionGroup } from 'react-transition-group'
+import { base } from '../base'
 
 class Alarms extends Component {
   state = {
@@ -136,8 +137,7 @@ class Alarms extends Component {
         }
       } else {
         if ( !alarms.some(elem =>  !elem.repeat.length ? elem.hour === alarm.hour :
-            ( elem.repeat.join(" ") === order2[getDay(new Date())] && elem.hour === alarm.hour) )
-        ){
+            ( elem.repeat.join(" ") === order2[getDay(new Date())] && elem.hour === alarm.hour) ) ){
           alarms.push(alarm)
           this.setState({ alarms, turnOff: '' })
         } else {
@@ -325,6 +325,20 @@ class Alarms extends Component {
    this.setState({ alarms: filteredAlarms, shortAlarms: filteredShortAlarms, turnOnAlarms})
  }
 
+ /*componentWillMount() {
+     this.alarmsRef = base.syncState('alarms', {
+       context: this,
+       state: 'alarms',
+       asArray: true
+     });
+   }
+
+   componentWillUnmount() {
+     base.removeBinding(this.songsRef);
+   }*/
+
+
+
   render() {
     const { alarms, shortAlarms, ring, showPopup, turnOff, error, showMathTask } = this.state
     return (
@@ -335,7 +349,7 @@ class Alarms extends Component {
             <AlarmForm onSubmit={this.onSubmitForm}/>
             {!!error && <InlineError text={error} />}
           </div>
-          {/*}<div className="alarm__alarms">{*/}
+          {/*}<div className="alarm__alarms">{}
           <CSSTransitionGroup
             transitionEnterTimeout={500}
             transitionLeaveTimeout={500}
